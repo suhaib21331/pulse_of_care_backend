@@ -11,7 +11,7 @@ class RegistrationController
      */
     public function index()
     {
-        //
+        return ("mmm");
     }
 
     /**

@@ -4,7 +4,7 @@ services:
    db:
       image: mariadb:latest
       command: --lower_case_table_names=1
-      container_name: mysql-server
+      container_name: mysql-server-container
       restart: always
       ports:
        - '3307:3306'   # 👈 غيرناه

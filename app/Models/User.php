@@ -44,4 +44,14 @@ class User extends Authenticatable
         return $this->hasOne(Nurse::class);
     }
 
+    public function companion()
+    {
+        return $this->hasOne(Companion::class);
+    }
+
+    public function driver()
+    {
+        return $this->hasOne(Driver::class);
+    }
+
 }

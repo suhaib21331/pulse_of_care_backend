@@ -6,16 +6,25 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password'])]
+#[Fillable(['email', 'password', 'full_name', 'phone_number', 'account_type'])]
+
 #[Hidden(['password', 'remember_token'])]
+
 class User extends Authenticatable
 {
+    public $primaryKey = 'id';
+
+    public $incrementing = false;
+
+    public $keyType = 'string';
+
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasUuids;
 
     /**
      * Get the attributes that should be cast.
@@ -29,4 +38,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function nurse()
+    {
+        return $this->hasOne(Nurse::class);
+    }
+
 }

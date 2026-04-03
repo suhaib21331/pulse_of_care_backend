@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Driver extends Model
+class FamilyMember extends Model
 {
-    use HasUuids;
+     use HasUuids;
+    public $table = 'family_members';
+
     public $primaryKey = 'id';
     
     public $incrementing = false;
@@ -17,16 +19,12 @@ class Driver extends Model
     
     protected $fillable = [
         'user_id',
-        'driver_license_number',
-        'car_license_number',
-        'plate_number',
-        'car_company',
-        'car_type',
-        'year_of_creation',
-        'car_color',
-        'car_image',
-        'biometric'
-
+        'kinship',
+        'elder_name',
+        'elder_age',
+        'city',
+        'detailed_address',
+        'notes'
     ];
 
     public function user()

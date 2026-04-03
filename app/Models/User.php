@@ -54,4 +54,14 @@ class User extends Authenticatable
         return $this->hasOne(Driver::class);
     }
 
+    public function elder()
+    {
+        return $this->hasOne(Elder::class);
+    }
+
+    public function familyMember()
+    {
+        return $this->hasOne(FamilyMember::class);
+    }
+
 }

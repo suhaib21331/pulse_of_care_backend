@@ -20,16 +20,14 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-      /*  User::create([
-
+        User::create([
             'email' => 'test@example2.com',
             'password' => '123456',
             'full_name' => 'Test User',
             'phone_number' => '1234567890',
-            'account_type' => 'nurses'
-            
+            'account_type' => 'nurse'
+        ]);
 
-            ]);*/
         Nurse::create([
             'user_id' => User::first()->id,
             'major' => 'Pediatric Nursing',
@@ -51,6 +49,7 @@ class DatabaseSeeder extends Seeder
             'car_color' => 'Red',
             'biometric' => random_bytes(32)
         ]);
+
         Companion::create([
             'user_id' => User::first()->id,
             'skills' => 'Cooking, Cleaning, Companionship',

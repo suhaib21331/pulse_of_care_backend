@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\FamilyMember;
 use App\Models\User;
 use App\Models\Nurse;
 use App\Models\Companion;

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('years_of_experience');
             $table->string('availability');
             $table->text('certificates');
-            $table->binary('biometric');
+            $table->binary('biometric')->nullable();
             $table->timestamps();
         });
     }

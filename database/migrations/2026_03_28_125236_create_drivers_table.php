@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('car_type');
             $table->integer('year_of_creation');
             $table->string('car_color');
-            $table->binary('biometric');
+            $table->binary('biometric')->nullable();
             $table->timestamps();
         });
     }

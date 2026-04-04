@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('license_number');
             $table->string('work_place');
             $table->text('about_you');
-            $table->binary('biometric');
+            $table->binary('biometric')->nullable();
             $table->timestamps();
         });
     }

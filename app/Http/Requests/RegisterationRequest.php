@@ -27,9 +27,27 @@ class RegisterationRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
             'full_name' => 'required|string|min:10|max:255',
-            //make phone number pattern to be 10 digits
             'phone_number' => 'required|string|regex:/^07[789][0-9]{7}$/',
-            'account_type' => 'required'
+            'account_type' => 'required|in:nurse,companion,driver,family_member,elderly'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'Email is required',
+            'email.email' => 'Email must be a valid email address',
+            'email.unique' => 'Email already exists',
+            'password.required' => 'Password is required',
+            'password.min' => 'Password must be at least 6 characters',
+            'full_name.required' => 'Full name is required',
+            'full_name.string' => 'Full name must be a string',
+            'full_name.min' => 'Full name must be at least 10 characters',
+            'full_name.max' => 'Full name must not exceed 255 characters',
+            'phone_number.required' => 'Phone number is required',
+            'phone_number.string' => 'Phone number must be a string',
+            'phone_number.regex' => 'Phone number must start with 07 followed by 7,8,9 and 7 digits',
+            'account_type.required' => 'Account type is required'
         ];
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->integer('driver_license_number');
             $table->integer('car_license_number');
-            $table->integer('plate_number');
+            $table->string('plate_number');
             $table->string('car_company');
             $table->string('car_type');
             $table->integer('year_of_creation');

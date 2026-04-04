@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class CompanionRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'user_id' => 'required|exists:users,id|unique:companions,user_id',
+            'skills' => 'required|string|max:1000',
+            'years_of_experience' => 'required|string|max:255',
+            'availability' => 'required|string|max:255',
+            'certificates' => 'required|string|max:1000',
+        ];
+    }
+}

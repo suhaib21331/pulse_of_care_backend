@@ -22,6 +22,22 @@ class NurseRequest extends FormRequest
      */
 
     //regex:/^[0-9]{1,2}-[0-9]{1,5}$/
+    /*
+    "email":"m2@gmail.com",
+ "password":"123446",
+ "phone_number":"0780693988",
+ "full_name":"mohammadddddddddddd",
+ "account_type":"driver"
+
+ "user_id":"019d5874-dd3a-7146-ae50-0e1a516899df",
+ "driver_license_number":"123455",
+ "car_license_number":"1234567",
+ "car_color":"red",
+ "car_type":"prius",
+ "car_company":"toyota",
+ "plate_number":"1-3456",
+ "year_of_creation":"2015"
+    */
     public function rules(): array
     {
         return [

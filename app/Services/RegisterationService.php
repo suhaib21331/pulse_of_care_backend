@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Nurse;
 use App\Models\Companion;

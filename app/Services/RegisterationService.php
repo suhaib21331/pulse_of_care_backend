@@ -9,6 +9,7 @@ use App\Models\Companion;
 use App\Models\Driver;
 use App\Models\FamilyMember;
 use App\Models\Elder;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RegisterationService
 {
@@ -19,7 +20,8 @@ class RegisterationService
             'password' => $request->password,
             'full_name' => $request->full_name,
             'phone_number' => $request->phone_number,
-            'account_type' => $request->account_type
+            'account_type' => $request->account_type,
+            'is_profile_completed' => $request->is_profile_completed
         ]);
 
         return $user;
@@ -27,6 +29,18 @@ class RegisterationService
 
     public function nurseRegister($request)
     {
+        $user = User::where('id', $request->user_id)
+        ->where('account_type', 'nurse')
+        ->where('is_profile_completed', false)
+        ->first();
+
+        if(!$user) 
+        {
+            return [
+                'message' => 'User not found or profile already completed'
+            ];
+        }
+
         $nurse = Nurse::create([
             'user_id' => $request->user_id,
             'major' => $request->major,
@@ -36,11 +50,34 @@ class RegisterationService
             'about_you' => $request->about_you,
         ]);
 
-        return $nurse;
+        $user->update([
+            'is_profile_completed' => true
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        return 
+        [
+            'nurse' => $nurse,
+            'token' => $token        
+        ];
     }
 
     public function companionRegister($request)
     {
+        $user = User::where('id', $request->user_id)
+        ->where('account_type', 'companion')
+        ->where('is_profile_completed', false)
+        ->first();
+
+        if(!$user) 
+        {
+            return 
+            [
+                'message' => 'User not found or profile already completed'
+            ];
+        }
+
         $companion = Companion::create([
             'user_id' => $request->user_id,
             'skills' => $request->skills,
@@ -49,11 +86,34 @@ class RegisterationService
             'certificates' => $request->certificates,
         ]);
 
-        return $companion;
+        $user->update([
+            'is_profile_completed' => true
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        return 
+        [
+            'companion' => $companion,
+            'token' => $token,
+            'message' => 'Companion registered successfully'
+        ];
     }
 
     public function driverRegister($request)
     {
+        $user = User::where('id', $request->user_id)
+        ->where('account_type', 'driver')
+        ->where('is_profile_completed', false)
+        ->first();
+
+        if(!$user) {
+            return 
+            [
+                'message' => 'User not found or profile already completed'
+            ];
+        }
+
         $driver = Driver::create([
             'user_id' => $request->user_id,
             'driver_license_number' => $request->driver_license_number,
@@ -63,15 +123,37 @@ class RegisterationService
             'year_of_creation' => $request->year_of_creation,
             'car_license_number' => $request->car_license_number,
             'plate_number' => $request->plate_number,
-            
-            
         ]);
 
-        return $driver;
+        $user->update([
+            'is_profile_completed' => true
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        return 
+        [
+            'driver' => $driver,
+            'token' => $token,
+            'message' => 'Driver registered successfully'
+        ];
     }
 
     public function familyMemberRegister($request)
     {
+        $user = User::where('id', $request->user_id)
+        ->where('account_type', 'family_member')
+        ->where('is_profile_completed', false)
+        ->first();
+
+        if(!$user) 
+        {
+            return 
+            [
+                'message' => 'User not found or profile already completed'
+            ];
+        }
+
         $familyMember = FamilyMember::create([
             'user_id' => $request->user_id,
             'kinship' => $request->kinship,
@@ -82,12 +164,35 @@ class RegisterationService
             'notes' => $request->notes,
         ]);
 
-        return $familyMember;
+        $user->update([
+            'is_profile_completed' => true
+        ]);
 
+        $token = JWTAuth::fromUser($user);
+
+        return 
+        [
+            'familyMember' => $familyMember,
+            'token' => $token,
+            'message' => 'Family member registered successfully'
+        ];
     }
 
     public function elderRegister($request)
     {
+        $user = User::where('id', $request->user_id)
+        ->where('account_type', 'elderly')
+        ->where('is_profile_completed', false)
+        ->first();
+
+        if(!$user) 
+        {
+            return 
+            [
+                'message' => 'User not found or profile already completed'
+            ];
+        }
+
         $elderlies = Elder::create([
             'user_id' => $request->user_id,
             'gender' => $request->gender,
@@ -102,6 +207,16 @@ class RegisterationService
             'age' => $request->age,
         ]);
 
-        return $elderlies;
+        $user->update([
+            'is_profile_completed' => true
+        ]);
+
+        $token = JWTAuth::fromUser($user);
+
+        return 
+        [
+            'elderly' => $elderlies,
+            'token' => $token
+        ];
     }
 }

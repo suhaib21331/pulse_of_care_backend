@@ -10,12 +10,13 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-#[Fillable(['email', 'password', 'full_name', 'phone_number', 'account_type'])]
+#[Fillable(['email', 'password', 'full_name', 'phone_number', 'account_type', 'is_profile_completed'])]
 
 #[Hidden(['password', 'remember_token'])]
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     public $primaryKey = 'id';
 
@@ -64,4 +65,13 @@ class User extends Authenticatable
         return $this->hasOne(FamilyMember::class);
     }
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
 }

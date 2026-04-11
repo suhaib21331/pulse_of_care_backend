@@ -36,8 +36,16 @@ class RegistrationController
     {
         $nurse = $this->registerationService->nurseRegister($request);
 
+        if(!isset($nurse['token']) && !isset($nurse['nurse'])) 
+        {
+            return response()->json([
+                'message' => $nurse['message']
+            ], 404);
+        }
+
         return response()->json([
             'nurse' => $nurse,
+            'token' => $nurse['token'],
             'message' => 'Nurse registered successfully'
         ], 200);
     }
@@ -46,8 +54,16 @@ class RegistrationController
     {
         $companion = $this->registerationService->companionRegister($request);
 
+        if(!isset($companion['token']) && !isset($companion['companion'])) 
+        {
+            return response()->json([
+                'message' => $companion['message']
+            ], 404);
+        }
+
         return response()->json([
             'companion' => $companion,
+            'token' => $companion['token'],
             'message' => 'Companion registered successfully'
         ], 200);
     }
@@ -56,8 +72,16 @@ class RegistrationController
     {
         $driver = $this->registerationService->driverRegister($request);
 
+        if(!isset($driver['token']) && !isset($driver['driver'])) 
+        {
+            return response()->json([
+                'message' => $driver['message']
+            ], 404);
+        }
+
         return response()->json([
             'driver' => $driver,
+            'token' => $driver['token'],
             'message' => 'Driver registered successfully'
         ], 200);
     }
@@ -66,9 +90,17 @@ class RegistrationController
     {
         $familyMember = $this->registerationService->familyMemberRegister($request);
 
+        if(!isset($familyMember['token']) && !isset($familyMember['familyMember'])) 
+        {
+            return response()->json([
+                'message' => $familyMember['message']
+            ], 404);
+        }
+
         return response()->json([
-            'family_member' => $familyMember,
-            'message' => 'Family member registered successfully'
+            'familyMember' => $familyMember['familyMember'],
+            'token' => $familyMember['token'],
+            'message' => $familyMember['message']
         ], 200);
     }
 
@@ -76,8 +108,16 @@ class RegistrationController
     {
         $elder = $this->registerationService->elderRegister($request);
 
+        if(!isset($elder['token']) && !isset($elder['elder'])) 
+        {
+            return response()->json([
+                'message' => $elder['message']
+            ], 404);
+        }
+
         return response()->json([
             'elder' => $elder,
+            'token' => $elder['token'],
             'message' => 'Elder registered successfully'
         ], 200);
     }

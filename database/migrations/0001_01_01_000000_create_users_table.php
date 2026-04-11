@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->integer('phone_number');
             $table->enum('account_type', ['nurse', 'companion', 'elderly', 'driver', 'family_member']);
+            $table->boolean('is_profile_completed')->default(false);
             $table->timestamps();
         });
 

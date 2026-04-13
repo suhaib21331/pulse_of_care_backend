@@ -16,4 +16,6 @@ Route::prefix('v1')->group(function()
     Route::post('/driver/register', [RegistrationController::class, 'driverRegister']);
     Route::post('/family-member/register', [RegistrationController::class, 'familyMemberRegister']);
     Route::post('/elder/register', [RegistrationController::class, 'elderRegister']);
+
+    Route::get('/test', [AuthController::class, 'test']);
 });

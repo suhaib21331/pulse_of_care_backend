@@ -6,7 +6,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthService
 {
-    public function login($request): array
+    public function login($request)
     {
         $credentials = $request->only('email', 'password');
 

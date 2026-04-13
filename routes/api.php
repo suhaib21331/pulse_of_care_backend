@@ -17,5 +17,9 @@ Route::prefix('v1')->group(function()
     Route::post('/family-member/register', [RegistrationController::class, 'familyMemberRegister']);
     Route::post('/elder/register', [RegistrationController::class, 'elderRegister']);
 
-    Route::get('/test', [AuthController::class, 'test']);
+    Route::get('/test', function() {
+        return response()->json([
+            'message' => 'Hello World'
+        ], 200);
+    });
 });

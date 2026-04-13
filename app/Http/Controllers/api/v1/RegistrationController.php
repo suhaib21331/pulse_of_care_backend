@@ -8,7 +8,6 @@ use App\Http\Requests\CompanionRequest;
 use App\Http\Requests\DriverRequest;
 use App\Http\Requests\ElderRequest;
 use App\Http\Requests\FamilyMemberRequest;
-use Illuminate\Http\Request;
 use App\Services\RegisterationService;
 
 class RegistrationController
@@ -42,7 +41,7 @@ class RegistrationController
                 'message' => $nurse['message']
             ], 404);
         }
-
+        
         return response()->json([
             'nurse' => $nurse,
             'token' => $nurse['token'],
@@ -86,7 +85,7 @@ class RegistrationController
         ], 200);
     }
 
-    public function familyMemberRegister(Request $request)
+    public function familyMemberRegister(FamilyMemberRequest $request)
     {
         $familyMember = $this->registerationService->familyMemberRegister($request);
 

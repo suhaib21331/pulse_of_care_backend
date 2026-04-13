@@ -218,4 +218,5 @@ class RegisterationService
             'token' => $token
         ];
     }
+
 }

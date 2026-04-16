@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Models\Nurse;
@@ -10,7 +10,7 @@ use App\Models\FamilyMember;
 use App\Models\Elder;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class RegisterationService
+class RegistrationService
 {
     public function register($request)
     {
@@ -23,7 +23,12 @@ class RegisterationService
             'is_profile_completed' => $request->is_profile_completed
         ]);
 
-        return $user;
+        return [
+            'user' => $user,
+            'message' => 'User registered successfully',
+            'status_code' => 200
+            // token is not generated here because the user needs to complete their profile first
+        ];
     }
 
     public function nurseRegister($request)
@@ -36,7 +41,8 @@ class RegisterationService
         if(!$user) 
         {
             return [
-                'message' => 'User not found or profile already completed'
+                'message' => 'User not found or profile already completed',
+                'status_code' => 404
             ];
         }
 
@@ -58,7 +64,9 @@ class RegisterationService
         return 
         [
             'nurse' => $nurse,
-            'token' => $token        
+            'token' => $token,
+            'message' => 'Nurse registered successfully',
+            'status_code' => 200   
         ];
     }
 
@@ -73,7 +81,8 @@ class RegisterationService
         {
             return 
             [
-                'message' => 'User not found or profile already completed'
+                'message' => 'User not found or profile already completed',
+                'status_code' => 404
             ];
         }
 
@@ -95,7 +104,8 @@ class RegisterationService
         [
             'companion' => $companion,
             'token' => $token,
-            'message' => 'Companion registered successfully'
+            'message' => 'Companion registered successfully',
+            'status_code' => 200
         ];
     }
 
@@ -109,7 +119,8 @@ class RegisterationService
         if(!$user) {
             return 
             [
-                'message' => 'User not found or profile already completed'
+                'message' => 'User not found or profile already completed',
+                'status_code' => 404
             ];
         }
 
@@ -134,7 +145,8 @@ class RegisterationService
         [
             'driver' => $driver,
             'token' => $token,
-            'message' => 'Driver registered successfully'
+            'message' => 'Driver registered successfully',
+            'status_code' => 200
         ];
     }
 
@@ -149,7 +161,8 @@ class RegisterationService
         {
             return 
             [
-                'message' => 'User not found or profile already completed'
+                'message' => 'User not found or profile already completed',
+                'status_code' => 404
             ];
         }
 
@@ -173,7 +186,8 @@ class RegisterationService
         [
             'familyMember' => $familyMember,
             'token' => $token,
-            'message' => 'Family member registered successfully'
+            'message' => 'Family member registered successfully',
+            'status_code' => 200
         ];
     }
 
@@ -188,7 +202,8 @@ class RegisterationService
         {
             return 
             [
-                'message' => 'User not found or profile already completed'
+                'message' => 'User not found or profile already completed',
+                'status_code' => 404
             ];
         }
 
@@ -215,7 +230,9 @@ class RegisterationService
         return 
         [
             'elderly' => $elderlies,
-            'token' => $token
+            'token' => $token,
+            'message' => 'Elderly registered successfully',
+            'status_code' => 200
         ];
     }
 

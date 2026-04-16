@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\api\v1;
+namespace App\Http\Controllers\api\v1\Auth;
 
 use App\Http\Requests\LoginRequest;
-use App\Services\AuthService;
+use App\Services\Auth\LoginService;
 
-class AuthController
+class LoginController
 {
     public $authService;
 
-    public function __construct(AuthService $authService)
+    public function __construct(LoginService $authService)
     {
         $this->authService = $authService;
     }
@@ -18,14 +18,17 @@ class AuthController
     {
         $result = $this->authService->login($request);
 
-        if (!isset($result['token'])) {
+        if (($result['status_code']) !== 200) 
+        {
             return response()->json([
-                'message' => $result['message']
-            ], 401);
+                'message' => $result['message'],
+                'user' => $result['user'] ?? null,
+            ], $result['status_code']);
         }
 
         return response()->json([
             'token' => $result['token'],
+            'user' => $result['user'],
             'message' => $result['message']
         ], 200);
     }

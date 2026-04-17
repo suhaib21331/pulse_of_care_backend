@@ -23,7 +23,6 @@ class ElderRequest extends FormRequest
     public function rules(): array
     {
         return [
-               'user_id' => 'required|exists:users,id',
                 'age' => 'required|integer|min:60',
                 'gender' => 'required|string|in:male,female',
                 'chronic_diseases' => 'required|string|max:1000',

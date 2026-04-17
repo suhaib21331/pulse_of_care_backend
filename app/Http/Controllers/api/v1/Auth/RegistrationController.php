@@ -42,6 +42,7 @@ class RegistrationController
         return response()->json([
             'user' => $user['user'],
             'message' => $user['message'], 
+            'token' => $user['token']
         ], $user['status_code']);
 
         /*

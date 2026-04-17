@@ -8,18 +8,20 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginService
 {
-   public function login($request)
+    public function login($request)
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) 
+        {
             return [
                 'status_code' => 401,
                 'message' => 'Invalid email or password'
             ];
         }
 
-        if (!$user->is_profile_completed) {
+        if (!$user->is_profile_completed) 
+        {
             return [
                 'status_code' => 403,
                 'message' => 'Please complete your profile first',

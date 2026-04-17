@@ -23,7 +23,6 @@ class FamilyMemberRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:family_members,user_id',
             'kinship' => 'required|string|max:255',
             'elder_name' => 'required|string|max:255',
             'elder_age' => 'required|integer|min:0',

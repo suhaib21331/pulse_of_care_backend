@@ -41,7 +41,6 @@ class NurseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:nurses,user_id',
             'major' => 'required|string|max:255',
             'years_of_experience' => 'required|string|max:255',
             'license_number' => 'required|min:4|max:10',

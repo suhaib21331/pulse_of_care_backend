@@ -23,7 +23,6 @@ class DriverRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:drivers,user_id',
             'driver_license_number' => 'required|integer|unique:drivers,driver_license_number',
             'car_type' => 'required|string|max:255',
             'car_company' => 'required|string|max:255',

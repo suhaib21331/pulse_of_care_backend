@@ -23,7 +23,6 @@ class CompanionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id|unique:companions,user_id',
             'skills' => 'required|string|max:1000',
             'years_of_experience' => 'required|string|max:255',
             'availability' => 'required|string|max:255',

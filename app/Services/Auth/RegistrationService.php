@@ -23,31 +23,22 @@ class RegistrationService
             'is_profile_completed' => $request->is_profile_completed
         ]);
 
+        $token = JWTAuth::fromUser($user);
+
         return [
             'user' => $user,
+            'token' => $token,
             'message' => 'User registered successfully',
             'status_code' => 200
-            // token is not generated here because the user needs to complete their profile first
         ];
     }
 
     public function nurseRegister($request)
     {
-        $user = User::where('id', $request->user_id)
-        ->where('account_type', 'nurse')
-        ->where('is_profile_completed', false)
-        ->first();
-
-        if(!$user) 
-        {
-            return [
-                'message' => 'User not found or profile already completed',
-                'status_code' => 404
-            ];
-        }
+        $user = auth()->guard('api')->user();
 
         $nurse = Nurse::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'major' => $request->major,
             'years_of_experience' => $request->years_of_experience,
             'license_number' => $request->license_number,
@@ -72,22 +63,10 @@ class RegistrationService
 
     public function companionRegister($request)
     {
-        $user = User::where('id', $request->user_id)
-        ->where('account_type', 'companion')
-        ->where('is_profile_completed', false)
-        ->first();
-
-        if(!$user) 
-        {
-            return 
-            [
-                'message' => 'User not found or profile already completed',
-                'status_code' => 404
-            ];
-        }
+        $user = auth()->guard('api')->user();
 
         $companion = Companion::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'skills' => $request->skills,
             'years_of_experience' => $request->years_of_experience,
             'availability' => $request->availability,
@@ -111,21 +90,10 @@ class RegistrationService
 
     public function driverRegister($request)
     {
-        $user = User::where('id', $request->user_id)
-        ->where('account_type', 'driver')
-        ->where('is_profile_completed', false)
-        ->first();
-
-        if(!$user) {
-            return 
-            [
-                'message' => 'User not found or profile already completed',
-                'status_code' => 404
-            ];
-        }
+        $user = auth()->guard('api')->user();
 
         $driver = Driver::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'driver_license_number' => $request->driver_license_number,
             'car_type' => $request->car_type,
             'car_color' => $request->car_color,
@@ -152,22 +120,10 @@ class RegistrationService
 
     public function familyMemberRegister($request)
     {
-        $user = User::where('id', $request->user_id)
-        ->where('account_type', 'family_member')
-        ->where('is_profile_completed', false)
-        ->first();
-
-        if(!$user) 
-        {
-            return 
-            [
-                'message' => 'User not found or profile already completed',
-                'status_code' => 404
-            ];
-        }
+        $user = auth()->guard('api')->user();
 
         $familyMember = FamilyMember::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'kinship' => $request->kinship,
             'elder_name' => $request->elder_name,
             'elder_age' => $request->elder_age,
@@ -193,22 +149,10 @@ class RegistrationService
 
     public function elderRegister($request)
     {
-        $user = User::where('id', $request->user_id)
-        ->where('account_type', 'elderly')
-        ->where('is_profile_completed', false)
-        ->first();
-
-        if(!$user) 
-        {
-            return 
-            [
-                'message' => 'User not found or profile already completed',
-                'status_code' => 404
-            ];
-        }
+        $user = auth()->guard('api')->user();
 
         $elderlies = Elder::create([
-            'user_id' => $request->user_id,
+            'user_id' => $user->id,
             'gender' => $request->gender,
             'chronic_diseases' => $request->chronic_diseases,
             'current_medications' => $request->current_medications,

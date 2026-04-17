@@ -10,13 +10,17 @@ Route::prefix('v1')->group(function()
     {
         Route::post('/register', [RegistrationController::class, 'register']);
         Route::post('/login', [LoginController::class, 'login']);
-        Route::post('/nurse/register', [RegistrationController::class, 'nurseRegister']);
-        Route::post('/companion/register', [RegistrationController::class, 'companionRegister']);
-        Route::post('/driver/register', [RegistrationController::class, 'driverRegister']);
-        Route::post('/family-member/register', [RegistrationController::class, 'familyMemberRegister']);
-        Route::post('/elder/register', [RegistrationController::class, 'elderRegister']);
+        
+        Route::middleware('auth:api')->group(function() 
+        {
+            Route::post('/nurse/register', [RegistrationController::class, 'nurseRegister'])->middleware(['account.type:nurse']);
+            Route::post('/companion/register', [RegistrationController::class, 'companionRegister'])->middleware(['account.type:companion']);
+            Route::post('/driver/register', [RegistrationController::class, 'driverRegister'])->middleware(['account.type:driver']);
+            Route::post('/family-member/register', [RegistrationController::class, 'familyMemberRegister'])->middleware(['account.type:family-member']);
+            Route::post('/elder/register', [RegistrationController::class, 'elderRegister'])->middleware(['account.type:elderly']);
+        });
     });
-    
+
     Route::get('/test', function() {
         return response()->json([
             'message' => 'Hello World'

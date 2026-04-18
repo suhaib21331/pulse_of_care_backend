@@ -25,8 +25,6 @@ class Driver extends Model
         'year_of_creation',
         'car_color',
         'car_image',
-        'biometric'
-
     ];
 
     public function user()

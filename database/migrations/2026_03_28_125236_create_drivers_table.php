@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->integer('driver_license_number');
             $table->integer('car_license_number');
             $table->string('plate_number');
@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('car_type');
             $table->integer('year_of_creation');
             $table->string('car_color');
-            $table->binary('biometric')->nullable();
             $table->timestamps();
         });
     }

@@ -37,6 +37,14 @@ class RegistrationService
     {
         $user = auth()->guard('api')->user();
 
+        if (Nurse::where('user_id', $user->id)->exists()) 
+        {
+            return [
+                'message' => 'Nurse profile already exists',
+                'status_code' => 400
+            ];
+        }
+
         $nurse = Nurse::create([
             'user_id' => $user->id,
             'major' => $request->major,
@@ -44,18 +52,16 @@ class RegistrationService
             'license_number' => $request->license_number,
             'work_place' => $request->work_place,
             'about_you' => $request->about_you,
+            
         ]);
 
         $user->update([
             'is_profile_completed' => true
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
         return 
         [
             'nurse' => $nurse,
-            'token' => $token,
             'message' => 'Nurse registered successfully',
             'status_code' => 200   
         ];
@@ -64,6 +70,14 @@ class RegistrationService
     public function companionRegister($request)
     {
         $user = auth()->guard('api')->user();
+
+        if (Companion::where('user_id', $user->id)->exists()) 
+        {
+            return [
+                'message' => 'Companion profile already exists',
+                'status_code' => 400
+            ];
+        }
 
         $companion = Companion::create([
             'user_id' => $user->id,
@@ -77,12 +91,9 @@ class RegistrationService
             'is_profile_completed' => true
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
         return 
         [
             'companion' => $companion,
-            'token' => $token,
             'message' => 'Companion registered successfully',
             'status_code' => 200
         ];
@@ -91,6 +102,21 @@ class RegistrationService
     public function driverRegister($request)
     {
         $user = auth()->guard('api')->user();
+
+        if (Driver::where('user_id', $user->id)->exists()) 
+        {
+            return [
+                'message' => 'Driver profile already exists',
+                'status_code' => 400
+            ];
+        }
+
+        $carImagePath = null;
+
+        if ($request->hasFile('car_image')) 
+        {
+            $carImagePath = $request->file('car_image')->store('drivers/cars', 'public');
+        }
 
         $driver = Driver::create([
             'user_id' => $user->id,
@@ -101,18 +127,21 @@ class RegistrationService
             'year_of_creation' => $request->year_of_creation,
             'car_license_number' => $request->car_license_number,
             'plate_number' => $request->plate_number,
+            'car_image' => $carImagePath,
         ]);
 
         $user->update([
             'is_profile_completed' => true
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
         return 
         [
-            'driver' => $driver,
-            'token' => $token,
+            'driver' => [
+                ...$driver->toArray(),
+                'car_image_url' => $driver->car_image 
+                    ? asset('storage/' . $driver->car_image)
+                    : null,
+            ],
             'message' => 'Driver registered successfully',
             'status_code' => 200
         ];
@@ -121,6 +150,14 @@ class RegistrationService
     public function familyMemberRegister($request)
     {
         $user = auth()->guard('api')->user();
+
+        if (FamilyMember::where('user_id', $user->id)->exists()) 
+        {
+            return [
+                'message' => 'Family member profile already exists',
+                'status_code' => 400
+            ];
+        }
 
         $familyMember = FamilyMember::create([
             'user_id' => $user->id,
@@ -136,12 +173,9 @@ class RegistrationService
             'is_profile_completed' => true
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
         return 
         [
             'familyMember' => $familyMember,
-            'token' => $token,
             'message' => 'Family member registered successfully',
             'status_code' => 200
         ];
@@ -150,6 +184,14 @@ class RegistrationService
     public function elderRegister($request)
     {
         $user = auth()->guard('api')->user();
+
+        if (Elder::where('user_id', $user->id)->exists()) 
+        {
+            return [
+                'message' => 'Elder profile already exists',
+                'status_code' => 400
+            ];
+        }
 
         $elderlies = Elder::create([
             'user_id' => $user->id,
@@ -169,12 +211,9 @@ class RegistrationService
             'is_profile_completed' => true
         ]);
 
-        $token = JWTAuth::fromUser($user);
-
         return 
         [
             'elderly' => $elderlies,
-            'token' => $token,
             'message' => 'Elderly registered successfully',
             'status_code' => 200
         ];

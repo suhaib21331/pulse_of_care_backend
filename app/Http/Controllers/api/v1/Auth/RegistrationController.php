@@ -21,7 +21,7 @@ class RegistrationController
     
     private function handleCompleteRegistrationResponse($data, $key)
     {
-        if ($data['status_code'] == 404) 
+        if ($data['status_code'] !== 200) 
         {
             return response()->json([
                 'message' => $data['message']
@@ -30,7 +30,6 @@ class RegistrationController
 
         return response()->json([
             $key => $data[$key],
-            'token' => $data['token'],
             'message' => $data['message']
         ], $data['status_code']);
     }
@@ -44,12 +43,6 @@ class RegistrationController
             'message' => $user['message'], 
             'token' => $user['token']
         ], $user['status_code']);
-
-        /*
-            this function does not follow the same structure as the other registration functions
-            because it does not generate a token and does not complete the registration process, it only creates the user 
-            and returns a message to complete the profile 
-        */
     }
 
     public function nurseRegister(NurseRequest $request)

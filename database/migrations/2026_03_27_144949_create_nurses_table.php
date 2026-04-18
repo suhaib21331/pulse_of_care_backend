@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('nurses', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->string('major');
             $table->string('years_of_experience');
             $table->integer('license_number');
             $table->string('work_place');
             $table->text('about_you');
-            $table->binary('biometric')->nullable();
             $table->timestamps();
         });
     }

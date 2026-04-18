@@ -20,7 +20,6 @@ class Companion extends Model
         'years_of_experience',
         'availability',
         'certificates',
-        'biometric'
     ];
 
     public function user()

@@ -33,6 +33,15 @@ class LoginController
         ], 200);
     }
 
+    public function me()
+    {
+        $result = $this->authService->me();
+
+        return response()->json([
+            'user' => $result['user']
+        ], $result['status_code']);
+    }
+
     /*public function logout()
     {
         $result = $this->authService->logout();

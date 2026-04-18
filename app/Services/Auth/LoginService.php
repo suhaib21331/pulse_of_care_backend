@@ -43,6 +43,17 @@ class LoginService
         ];
     }
 
+    public function me()
+    {
+        $user = auth()->guard('api')->user();
+
+        return 
+        [
+            'status_code' => 200,
+            'user' => $user
+        ];
+    }
+
     /*public function logout(): array
     {
         try {

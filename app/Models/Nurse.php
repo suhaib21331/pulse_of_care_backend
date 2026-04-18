@@ -21,7 +21,6 @@ class Nurse extends Model
         'license_number',
         'work_place',
         'about_you',
-        'biometric'
     ];
 
     public function user()

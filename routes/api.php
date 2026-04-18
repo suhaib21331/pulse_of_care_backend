@@ -18,6 +18,8 @@ Route::prefix('v1')->group(function()
             Route::post('/driver/register', [RegistrationController::class, 'driverRegister'])->middleware(['account.type:driver']);
             Route::post('/family-member/register', [RegistrationController::class, 'familyMemberRegister'])->middleware(['account.type:family-member']);
             Route::post('/elder/register', [RegistrationController::class, 'elderRegister'])->middleware(['account.type:elderly']);
+            
+            Route::get('/me', [LoginController::class, 'me']);
         });
     });
 

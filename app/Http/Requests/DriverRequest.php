@@ -30,6 +30,7 @@ class DriverRequest extends FormRequest
             'year_of_creation' => 'required|integer',
             'car_license_number' => 'required|integer|unique:drivers,car_license_number',
             'plate_number' => 'required|string|unique:drivers,plate_number|regex:/^[0-9]{1,2}-[0-9]{1,5}$/|max:255  ',
+            'car_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }

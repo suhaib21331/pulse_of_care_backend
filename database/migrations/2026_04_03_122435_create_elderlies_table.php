@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('elderlies', function (Blueprint $table) {
 
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignUuid('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->integer('age');
             $table->enum('gender', ['male', 'female']);
             $table->text('chronic_diseases');

@@ -22,10 +22,4 @@ Route::prefix('v1')->group(function()
             Route::get('/me', [LoginController::class, 'me']);
         });
     });
-
-    Route::get('/test', function() {
-        return response()->json([
-            'message' => 'Hello World'
-        ], 200);
-    });
 });

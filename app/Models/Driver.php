@@ -21,6 +21,7 @@ class Driver extends Model
         'car_license_number',
         'plate_number',
         'car_company',
+        'useful_for_elder',
         'car_type',
         'year_of_creation',
         'car_color',

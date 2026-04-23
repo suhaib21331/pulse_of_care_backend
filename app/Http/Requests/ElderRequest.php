@@ -23,12 +23,13 @@ class ElderRequest extends FormRequest
     public function rules(): array
     {
         return [
-                'age' => 'required|integer|min:60',
+                'age' => 'required|integer|min:50|max:100',
                 'gender' => 'required|string|in:male,female',
                 'chronic_diseases' => 'required|string|max:1000',
                 'current_medications' => 'required|string|max:1000',
                 'allergies' => 'required|string|max:1000',
-                'can_walk' => 'required|boolean',
+                'uses_diapers' => 'required|boolean',
+                'movement_level' => 'required|string|max:255',
                 'need_wheel_chair' => 'required|boolean',
                 'city' => 'required|string|max:255',
                 'detailed_address' => 'required|string|max:1000',

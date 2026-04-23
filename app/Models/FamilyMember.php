@@ -22,6 +22,9 @@ class FamilyMember extends Model
         'kinship',
         'elder_name',
         'elder_age',
+        'uses_diapers',
+        'need_wheel_chair',
+        'health_condition',
         'city',
         'detailed_address',
         'notes'

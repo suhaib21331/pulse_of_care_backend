@@ -22,13 +22,15 @@ class DriverRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'driver_license_number' => 'required|integer|unique:drivers,driver_license_number',
+        return 
+        [
+            'driver_license_number' => 'required|integer|unique:drivers,driver_license_number|max:8|min:8',
             'car_type' => 'required|string|max:255',
             'car_company' => 'required|string|max:255',
             'car_color' => 'required|string|max:255',
             'year_of_creation' => 'required|integer',
-            'car_license_number' => 'required|integer|unique:drivers,car_license_number',
+            'useful_for_elder' => 'required|boolean',
+            'car_license_number' => 'required|integer|unique:drivers,car_license_number|max:10|min:10',
             'plate_number' => 'required|string|unique:drivers,plate_number|regex:/^[0-9]{1,2}-[0-9]{1,5}$/|max:255  ',
             'car_image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];

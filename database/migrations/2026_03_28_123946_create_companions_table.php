@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignUuid('user_id')->unique()->constrained('users')->onDelete('cascade');
             $table->text('skills');
             $table->string('years_of_experience');
-            $table->string('availability');
             $table->text('certificates');
             $table->timestamps();
         });

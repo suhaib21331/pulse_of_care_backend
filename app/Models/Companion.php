@@ -18,7 +18,6 @@ class Companion extends Model
         'user_id',
         'skills',
         'years_of_experience',
-        'availability',
         'certificates',
     ];
 

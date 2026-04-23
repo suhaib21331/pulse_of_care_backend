@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('plate_number');
             $table->string('car_company');
             $table->string('car_type');
+            $table->boolean('useful_for_elder')->default(false);
             $table->integer('year_of_creation');
             $table->string('car_color');
             $table->timestamps();

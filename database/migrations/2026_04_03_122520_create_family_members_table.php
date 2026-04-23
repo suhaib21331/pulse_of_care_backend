@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('elder_name');
             $table->integer('elder_age');
             $table->string('city');
+            $table->boolean('need_wheel_chair')->default(false);
+            $table->text('health_condition');
+            $table->boolean('uses_diapers')->default(false);
             $table->text('detailed_address');
             $table->text('notes');
             $table->timestamps();

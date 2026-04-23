@@ -43,7 +43,7 @@ class NurseRequest extends FormRequest
         return [
             'major' => 'required|string|max:255',
             'years_of_experience' => 'required|string|max:255',
-            'license_number' => 'required|min:4|max:10',
+            'license_number' => 'required|min:5|max:7|unique:nurses,license_number',
             'work_place' => 'required|string|max:255',
             'about_you' => 'required|string|max:1000',
         ];

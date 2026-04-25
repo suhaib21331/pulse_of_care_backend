@@ -25,7 +25,7 @@ class User extends Authenticatable implements JWTSubject
     public $keyType = 'string';
 
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasUuids;
+    use HasFactory, HasUuids, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -65,11 +65,16 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(FamilyMember::class);
     }
 
+    public function serviceRequests()
+    {
+        return $this->hasMany(ServiceRequest::class, 'elder_id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
-    
+
     public function getJWTCustomClaims()
     {
         return [];

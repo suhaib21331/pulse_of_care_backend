@@ -14,7 +14,8 @@ class LoginService
 
         if (!$user || !Hash::check($request->password, $user->password)) 
         {
-            return [
+            return 
+            [
                 'status_code' => 401,
                 'message' => 'Invalid email or password'
             ];
@@ -33,12 +34,15 @@ class LoginService
             ];
         }
 
+        $user->load($user->account_type);
+
         $token = JWTAuth::fromUser($user);
 
         return [
             'status_code' => 200,
             'token' => $token,
             'user' => $user,
+            'profile' => $user->{$user->account_type},
             'message' => 'Login successful'
         ];
     }
@@ -47,10 +51,14 @@ class LoginService
     {
         $user = auth()->guard('api')->user();
 
+        $user->load($user->account_type);
+
         return 
         [
             'status_code' => 200,
-            'user' => $user
+            'user' => $user,
+            'profile' => $user->{$user->account_type},
+            'message' => 'User profile retrieved successfully'
         ];
     }
 

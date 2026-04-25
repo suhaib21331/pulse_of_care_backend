@@ -55,12 +55,12 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(Driver::class);
     }
 
-    public function elder()
+    public function elderly()
     {
         return $this->hasOne(Elder::class);
     }
 
-    public function familyMember()
+    public function family_member()
     {
         return $this->hasOne(FamilyMember::class);
     }

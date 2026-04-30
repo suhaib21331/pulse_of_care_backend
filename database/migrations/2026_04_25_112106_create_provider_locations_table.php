@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('provider_locations', function (Blueprint $table) {
             $table->id();
-            $table->uuid('provider_id');
-            $table->enum('provider_type', ['nurse', 'driver', 'companion']);
+            $table->uuidMorphs('provider');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
             $table->boolean('is_available')->default(false);

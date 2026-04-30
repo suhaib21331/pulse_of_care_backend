@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DriverServiceRequest extends Model
 {
-    protected $fillable = [
+    protected $fillable = 
+    [
         'service_request_id',
         'pickup_address',
         'pickup_latitude',

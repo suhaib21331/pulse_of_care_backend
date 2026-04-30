@@ -32,4 +32,9 @@ class Driver extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function location()
+    {
+        return $this->morphOne(ProviderLocation::class, 'provider');
+    }
 }

@@ -10,4 +10,9 @@ class ProviderLocation extends Model
     use HasUuids;
 
     protected $fillable = ['provider_id', 'provider_type', 'latitude', 'longitude', 'is_available', 'last_seen_at'];
+
+    public function provider()
+    {
+        return $this->morphTo();
+    }
 }

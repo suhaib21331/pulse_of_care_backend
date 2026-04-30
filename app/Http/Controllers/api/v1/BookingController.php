@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api\v1;
 
+use BookingService;
 use Illuminate\Http\Request;
 
 class BookingController
@@ -9,9 +10,22 @@ class BookingController
     /**
      * Display a listing of the resource.
      */
+    public $bookingService ;
+    public function __construct(BookingService $bookingService)
+    {
+        $this->bookingService = $bookingService;
+    }
+
+    
     public function index()
     {
         //
+    }
+
+    public function createBooking(Request $request)
+    {
+        $booking = $this->bookingService->createBooking($request);
+        return response()->json($booking, 201);
     }
 
     /**

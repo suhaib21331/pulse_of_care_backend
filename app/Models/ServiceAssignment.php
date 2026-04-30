@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceRequestAssignment extends Model
+class ServiceAssignment extends Model
 {
     protected $fillable = [
-        'service_request_id',
+        'service_id',
         'provider_id',
         'provider_type',
         'distance_km',
@@ -16,8 +16,8 @@ class ServiceRequestAssignment extends Model
         'responded_at',
     ];
 
-    public function serviceRequest()
+    public function service()
     {
-        return $this->belongsTo(ServiceRequest::class);
+        return $this->belongsTo(Service::class);
     }
 }

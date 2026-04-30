@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nurse_service_requests', function (Blueprint $table) {
+        Schema::create('nurse_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('service_request_id')->constrained('service_requests')->cascadeOnDelete();
+            $table->foreignUuid('service_id')->constrained('services')->cascadeOnDelete();
             $table->string('nurse_major');
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nurse_service_requests');
+        Schema::dropIfExists('nurse_services');
     }
 };

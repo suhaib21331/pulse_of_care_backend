@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_request_assignments', function (Blueprint $table) {
+        Schema::create('service_assignments', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('service_request_id')->constrained('service_requests')->cascadeOnDelete();
+            $table->foreignUuid('service_id')->constrained('services')->cascadeOnDelete();
             $table->uuid('provider_id');
             $table->enum('provider_type', ['nurse', 'driver', 'companion']);
             $table->decimal('distance_km', 8, 2)->nullable();
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_request_assignments');
+        Schema::dropIfExists('service_assignments');
     }
 };

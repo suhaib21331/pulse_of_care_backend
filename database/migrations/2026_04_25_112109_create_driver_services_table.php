@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('driver_service_requests', function (Blueprint $table) {
+        Schema::create('driver_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('service_request_id')->constrained('service_requests')->cascadeOnDelete();
+            $table->foreignUuid('service_id')->constrained('services')->cascadeOnDelete();
             $table->string('pickup_address');
             $table->decimal('pickup_latitude', 10, 7);
             $table->decimal('pickup_longitude', 10, 7);
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('driver_service_requests');
+        Schema::dropIfExists('driver_services');
     }
 };

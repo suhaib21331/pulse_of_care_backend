@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('companion_service_requests', function (Blueprint $table) {
+        Schema::create('companion_services', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('service_request_id')->constrained('service_requests')->cascadeOnDelete();
+            $table->foreignUuid('service_id')->constrained('services')->cascadeOnDelete();
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->enum('period', ['morning', 'evening', 'full_day'])->nullable();
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('companion_service_requests');
+        Schema::dropIfExists('companion_services');
     }
 };

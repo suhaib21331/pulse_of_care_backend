@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceRequest extends Model
+class Service extends Model
 {
     use HasUuids;
 
@@ -28,23 +28,23 @@ class ServiceRequest extends Model
         return $this->belongsTo(User::class, 'elder_id');
     }
 
-    public function nurseServiceRequest()
+    public function nurseService()
     {
-        return $this->hasOne(NurseServiceRequest::class);
+        return $this->hasOne(NurseService::class);
     }
 
-    public function companionServiceRequest()
+    public function companionService()
     {
-        return $this->hasOne(CompanionServiceRequest::class);
+        return $this->hasOne(CompanionService::class);
     }
 
-    public function driverServiceRequest()
+    public function driverService()
     {
-        return $this->hasOne(DriverServiceRequest::class);
+        return $this->hasOne(DriverService::class);
     }
 
-    public function serviceRequestAssignments()
+    public function serviceAssignments()
     {
-        return $this->hasMany(ServiceRequestAssignment::class);
+        return $this->hasMany(ServiceAssignment::class);
     }
 }

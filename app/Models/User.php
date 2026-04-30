@@ -65,9 +65,9 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasOne(FamilyMember::class);
     }
 
-    public function serviceRequests()
+    public function services()
     {
-        return $this->hasMany(ServiceRequest::class, 'elder_id');
+        return $this->hasMany(Service::class, 'elder_id');
     }
 
     public function getJWTIdentifier()

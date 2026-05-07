@@ -2,61 +2,36 @@
 
 namespace App\Http\Controllers\api\v1;
 
-use BookingService;
-use Illuminate\Http\Request;
+use App\Http\Requests\ServiceRequest;
+use App\Services\BookingService;
+use Illuminate\Http\JsonResponse;
+use Throwable;
 
 class BookingController
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public $bookingService ;
-    public function __construct(BookingService $bookingService)
+    public function __construct(private BookingService $bookingService)
     {
         $this->bookingService = $bookingService;
     }
 
-    
-    public function index()
+    public function createBooking(ServiceRequest $request): JsonResponse
     {
-        //
-    }
+        try {
+            $service = $this->bookingService->createBooking($request->validated());
 
-    public function createBooking(Request $request)
-    {
-        $booking = $this->bookingService->createBooking($request);
-        return response()->json($booking, 201);
-    }
+            return response()->json([
+                'message' => 'Service booking created successfully.',
+                'service' => $service,
+                'status_code' => 201,
+            ], 201);
+        } catch (Throwable $exception) {
+            report($exception);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return response()->json([
+                'message' => 'Unable to create service booking at this time.',
+                'service' => null,
+                'status_code' => 500,
+            ], 500);
+        }
     }
 }

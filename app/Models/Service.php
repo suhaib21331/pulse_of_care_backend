@@ -13,15 +13,16 @@ class Service extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = [
-        'elder_id',
-        'service_type',
-        'service_condition',
-        'service_address',
-        'service_latitude',
-        'service_longitude',
-        'status',
-    ];
+    protected $fillable =
+        [
+            'elder_id',
+            'service_type',
+            'service_condition',
+            'service_address',
+            'service_latitude',
+            'service_longitude',
+            'status',
+        ];
 
     public function elder()
     {
@@ -30,21 +31,21 @@ class Service extends Model
 
     public function nurseService()
     {
-        return $this->hasOne(NurseService::class);
+        return $this->hasOne(NurseService::class, 'service_id');
     }
 
     public function companionService()
     {
-        return $this->hasOne(CompanionService::class);
+        return $this->hasOne(CompanionService::class, 'service_id');
     }
 
     public function driverService()
     {
-        return $this->hasOne(DriverService::class);
+        return $this->hasOne(DriverService::class, 'service_id');
     }
 
     public function serviceAssignments()
     {
-        return $this->hasMany(ServiceAssignment::class);
+        return $this->hasMany(ServiceAssignment::class, 'service_id');
     }
 }

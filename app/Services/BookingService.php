@@ -1,49 +1,73 @@
 <?php
 
-use App\Models\Service;
-use App\Models\NurseService;
-use App\Models\DriverService;
+namespace App\Services;
+
 use App\Models\CompanionService;
+use App\Models\DriverService;
+use App\Models\NurseService;
+use App\Models\Service;
+use Illuminate\Support\Facades\DB;
 
-class BookingService {
+class BookingService
+{
+    private $matchingService;
 
-    // Service implementation
-    public function createBooking($request) {
-        $user = auth()->guard('api')->user();
+    public function __construct(MatchingService $matchingService)
+    {
+        $this->matchingService = $matchingService;
+    }
 
-        $Service = Service::create([
-            'elder_id' => $user->id,
-            'service_type' => $request['service_type'],
-            'service_condition' => $request['service_condition'],
-            'service_address' => $request['service_address'],
-            'service_latitude' => $request['service_latitude'],
-            'service_longitude' => $request['service_longitude'],
-            'status' => 'pending',
+    public function createBooking($request): Service
+    {
+        $elder = auth()->guard('api')->user();
+
+        $service = DB::transaction(function () use ($request, $elder): Service {
+            $service = Service::create([
+                'elder_id' => $elder->id,
+                'service_type' => $request['service_type'],
+                'service_condition' => $request['service_condition'],
+                'service_address' => $request['service_type'] === 'driver' ? null : ($request['service_address'] ?? null),
+                'service_latitude' => $request['service_type'] === 'driver' ? null : ($request['service_latitude'] ?? null),
+                'service_longitude' => $request['service_type'] === 'driver' ? null : ($request['service_longitude'] ?? null),
+                'status' => 'pending',
+            ]);
+
+            $this->createTypeSpecificService($service->id, $request);
+
+            $service->load([
+                'nurseService',
+                'driverService',
+                'companionService',
+            ]);
+
+            $assignmentsCreated = $this->matchingService->createAssignmentsForService($service);
+
+            if ($assignmentsCreated > 0) {
+                $service->update(['status' => 'assigned']);
+            }
+
+            return $service;
+        });
+
+        return $service->load([
+            'nurseService',
+            'driverService',
+            'companionService',
+            'serviceAssignments',
         ]);
+    }
+
+    private function createTypeSpecificService($serviceId, $request): void
+    {
         if ($request['service_type'] === 'nurse') {
-            $this->nurseService($Service->id ,$request);
-        } elseif ($request['service_type'] === 'driver') {
-            $this->driverService($Service->id, $request);
-        } elseif ($request['service_type'] === 'companion') {
-            $this->companionService($Service->id, $request);
+            NurseService::create([
+                'service_id' => $serviceId,
+                'nurse_major' => $request['nurse_major'],
+            ]);
         }
-        return $Service;
-    }
 
-    public function nurseService($serviceId, $request)
-    {
-        $nurseService = NurseService::create([
-            'service_id' => $serviceId,
-            'nurse_major' => $request['nurse_major'],
-        ]);
-        return $nurseService;
-
-    }
-
-    public function driverService($serviceId, $request)
-    {
-       
-            $driverService = DriverService::create([
+        if ($request['service_type'] === 'driver') {
+            DriverService::create([
                 'service_id' => $serviceId,
                 'pickup_address' => $request['pickup_address'],
                 'pickup_latitude' => $request['pickup_latitude'],
@@ -52,23 +76,15 @@ class BookingService {
                 'dropoff_latitude' => $request['dropoff_latitude'],
                 'dropoff_longitude' => $request['dropoff_longitude'],
             ]);
-            return $driverService;
+        }
 
+        if ($request['service_type'] === 'companion') {
+            CompanionService::create([
+                'service_id' => $serviceId,
+                'start_time' => $request['start_time'],
+                'end_time' => $request['end_time'],
+                'period' => $request['period'],
+            ]);
+        }
     }
-
-    public function companionService($serviceId, $request)
-    {
-     
-        $companionService = CompanionService::create([
-            'service_id' => $serviceId,
-            'start_time' => $request['start_time'],
-            'end_time' => $request['end_time'],
-            'period' => $request['period'],
-        ]);
-        return $companionService;
-    }
-
-
-
 }
-?>

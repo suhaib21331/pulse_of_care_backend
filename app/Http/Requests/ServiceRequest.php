@@ -22,22 +22,21 @@ class ServiceRequest extends FormRequest
      */
     public function rules()
     {
-        
-        $rules = [
-        'service_type' => 'required|in:nurse,driver,companion',
-        'service_condition' => 'required|in:normal,urgent,emergency',
 
-        'service_address' => 'nullable|string',
-        'service_latitude' => 'nullable|numeric',
-        'service_longitude' => 'nullable|numeric',
+        $rules = [
+            'service_type' => 'required|in:nurse,driver,companion',
+            'service_condition' => 'required|in:normal,urgent,emergency',
+
+            'service_address' => 'nullable|string',
+            'service_latitude' => 'nullable|numeric',
+            'service_longitude' => 'nullable|numeric',
         ];
 
         switch ($this->service_type) {
-
             case 'nurse':
                 $rules += [
                     'nurse_major' => 'required|string',
-                    
+
                 ];
                 break;
 
@@ -57,7 +56,7 @@ class ServiceRequest extends FormRequest
                     'start_time' => 'required|date_format:H:i',
                     'end_time' => 'required|date_format:H:i',
                     'period' => 'required|in:morning,evening,full_day',
-                    
+
                 ];
                 break;
         }

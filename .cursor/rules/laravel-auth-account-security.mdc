@@ -1,0 +1,88 @@
+---
+description: Security patterns for Laravel authentication and account management
+alwaysApply: true
+---
+
+# Laravel Auth & Account Security Rule
+
+## Service Input Contract
+
+Pass validated scalar values into services, not entire Form Request objects.
+
+```php
+// ❌ BAD: service depends on HTTP layer
+public function verifyCode(VerifyEmailCodeRequest $request): array
+{
+    Hash::check($request->code, $user->email_verification_code);
+}
+
+// ✅ GOOD: service accepts only what it needs
+public function verifyCode(string $code): array
+{
+    Hash::check($code, $user->email_verification_code);
+}
+
+// Controller extracts the scalar and passes it
+$result = $this->emailVerificationService->verifyCode(
+    $request->validated('code')
+);
+```
+
+## Sensitive Identity Changes
+
+Require current password before allowing account identity changes (email, password).
+
+```php
+// ✅ GOOD: confirm identity before changing email
+if (! Hash::check($request->current_password, $user->password)) {
+    return ['status_code' => 401, 'message' => 'Invalid current password'];
+}
+```
+
+## Email Change Flow
+
+When changing email, always reset verification state and issue a new code.
+
+```php
+// ✅ GOOD: atomic email change + new verification code
+DB::transaction(function () use ($user, $request) {
+    $user->update([
+        'email' => $request->email,
+        'email_verified_at' => null,
+    ]);
+
+    $this->emailVerificationService->sendVerificationCode($user);
+});
+```
+
+## Queued Mail Jobs
+
+Pass the recipient email as a string to queued mail jobs. Never rely on a rehydrated `User` model email, since the model may be reloaded from the database when the job runs.
+
+```php
+// ❌ BAD: recipient email may change before job runs
+Mail::to($this->user->email)->send(...);
+
+// ✅ GOOD: email frozen at dispatch time
+SendEmailVerificationJob::dispatch($user, $code, $user->email);
+
+// In job constructor:
+public readonly string $email
+
+// In handle():
+Mail::to($this->email)->send(...);
+```
+
+## Hiding Verification Internals
+
+Always hide internal verification fields from serialized API responses.
+
+```php
+// ✅ GOOD: in User model
+#[Hidden([
+    'password',
+    'remember_token',
+    'email_verification_code',
+    'email_verification_expires_at',
+])]
+```

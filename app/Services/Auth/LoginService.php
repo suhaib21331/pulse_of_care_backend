@@ -12,16 +12,26 @@ class LoginService
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) 
+        if (!$user || !Hash::check($request->password, $user->password))
         {
-            return 
-            [
+            return [
                 'status_code' => 401,
-                'message' => 'Invalid email or password'
+                'message' => 'Invalid email or password',
             ];
         }
 
-        if (!$user->is_profile_completed) 
+        /*if (!$user->email_verified_at)
+        {
+            $verificationToken = JWTAuth::claims(['purpose' => 'email_verification'])->fromUser($user);
+
+            return [
+                'status_code' => 403,
+                'message' => 'Please verify your email address before logging in.',
+                'verification_token' => $verificationToken,
+            ];
+        }*/
+
+        if (!$user->is_profile_completed)
         {
             return [
                 'status_code' => 403,

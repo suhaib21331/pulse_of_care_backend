@@ -12,9 +12,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-#[Fillable(['email', 'password', 'full_name', 'phone_number', 'account_type', 'is_profile_completed'])]
+#[Fillable(['email', 'password', 'full_name', 'phone_number', 'account_type', 'is_profile_completed', 'profile_image', 'email_verified_at', 'email_verification_code', 'email_verification_expires_at'])]
 
-#[Hidden(['password', 'remember_token'])]
+#[Hidden(['password', 'remember_token', 'email_verification_code', 'email_verification_expires_at',])]
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -34,8 +34,10 @@ class User extends Authenticatable implements JWTSubject
      */
     protected function casts(): array
     {
-        return [
+        return 
+        [
             'email_verified_at' => 'datetime',
+            'email_verification_expires_at' => 'datetime',
             'password' => 'hashed',
         ];
     }

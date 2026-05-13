@@ -16,7 +16,8 @@ class MatchingService
     {
         [$latitude, $longitude] = $this->resolveMatchingCoordinates($service);
 
-        if ($latitude === null || $longitude === null) {
+        if ($latitude === null || $longitude === null) 
+        {
             return 0;
         }
 
@@ -39,12 +40,15 @@ class MatchingService
             ->take(3)
             ->values();
 
-        if ($locations->isEmpty()) {
+        if ($locations->isEmpty()) 
+        {
             return 0;
         }
 
-        $assignments = $locations->map(function (ProviderLocation $location) use ($service): array {
-            return [
+        $assignments = $locations->map(function (ProviderLocation $location) use ($service): array 
+        {
+            return 
+            [
                 'service_id' => $service->id,
                 'provider_id' => $location->provider_id,
                 'provider_type' => $this->resolveProviderTypeLabel($service),

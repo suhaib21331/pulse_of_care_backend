@@ -16,7 +16,8 @@ class BookingController
 
     public function createBooking(ServiceRequest $request): JsonResponse
     {
-        try {
+        try 
+        {
             $service = $this->bookingService->createBooking($request->validated());
 
             return response()->json([
@@ -24,7 +25,10 @@ class BookingController
                 'service' => $service,
                 'status_code' => 201,
             ], 201);
-        } catch (Throwable $exception) {
+        } 
+        
+        catch (Throwable $exception) 
+        {
             report($exception);
 
             return response()->json([

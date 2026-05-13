@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'account.type' => \App\Http\Middleware\AccountType::class,
+            'email.verified' => \App\Http\Middleware\EmailVerified::class,
             'profile.completed' => \App\Http\Middleware\ProfileCompleted::class,
         ]);
     })

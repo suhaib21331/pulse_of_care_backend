@@ -1,0 +1,32 @@
+---
+description: Keep domain logic in Laravel service classes
+alwaysApply: true
+---
+
+# Laravel Service Layer Rule
+
+## Responsibilities
+
+- Put business/domain logic in service classes, not controllers.
+- Keep each service method focused on one use case.
+- Name methods by domain intent (`createBooking`, `findBestProvider`).
+- Keep return values predictable (DTO/array/resource contract).
+
+## Service Pattern
+
+```php
+// ✅ GOOD: service orchestrates domain operations
+public function createBooking(array $data): array
+{
+    $match = $this->matchingService->findBestProvider($data);
+
+    return $this->persistBooking($data, $match);
+}
+```
+
+## Service Quality
+
+- Prefer constructor-injected dependencies.
+- Extract reusable logic instead of duplicating across services.
+- Keep database operations transactional when consistency matters.
+- Throw domain-meaningful exceptions and let upper layers format responses.

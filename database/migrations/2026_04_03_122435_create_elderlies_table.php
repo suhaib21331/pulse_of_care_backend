@@ -19,9 +19,10 @@ return new class extends Migration
             $table->enum('gender', ['male', 'female']);
             $table->text('chronic_diseases');
             $table->text('current_medications');
-            $table->text('allergies')->nullable();
-            $table->boolean('can_walk')->default(false);
+            $table->text('allergies');
             $table->boolean('need_wheel_chair')->default(false);
+            $table->boolean('uses_diapers')->default(false);
+            $table->string('movement_level');
             $table->string('city');
             $table->text('detailed_address');
             $table->text('notes');

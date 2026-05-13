@@ -25,7 +25,10 @@ class FamilyMemberRequest extends FormRequest
         return [
             'kinship' => 'required|string|max:255',
             'elder_name' => 'required|string|max:255',
-            'elder_age' => 'required|integer|min:0',
+            'uses_diapers' => 'required|boolean',
+            'need_wheel_chair' => 'required|boolean',
+            'health_condition' => 'required|string|max:1000',
+            'elder_age' => 'required|integer|min:50|max:100',
             'city' => 'required|string|max:255',
             'detailed_address' => 'required|string|max:1000',
             'notes' => 'required|string|max:1000',

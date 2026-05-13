@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class NurseRequest extends FormRequest
+class ChangeEmailRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,16 +20,22 @@ class NurseRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-
-   
     public function rules(): array
     {
-        return [
-            'major' => 'required|string|max:255',
-            'years_of_experience' => 'required|string|max:255',
-            'license_number' => 'required|min:5|max:7|unique:nurses,license_number',
-            'work_place' => 'required|string|max:255',
-            'about_you' => 'required|string|max:1000',
+        return 
+        [
+            'email' => 'required|email|unique:users,email',
+            'current_password' => 'required|string',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return 
+        [
+            'email.required' => 'Email is required',
+            'email.email' => 'Email must be a valid email address',
+            'email.unique' => 'Email already exists',
         ];
     }
 }

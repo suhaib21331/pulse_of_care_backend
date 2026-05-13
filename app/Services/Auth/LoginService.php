@@ -12,15 +12,26 @@ class LoginService
     {
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) 
+        if (!$user || !Hash::check($request->password, $user->password))
         {
             return [
                 'status_code' => 401,
-                'message' => 'Invalid email or password'
+                'message' => 'Invalid email or password',
             ];
         }
 
-        if (!$user->is_profile_completed) 
+        /*if (!$user->email_verified_at)
+        {
+            $verificationToken = JWTAuth::claims(['purpose' => 'email_verification'])->fromUser($user);
+
+            return [
+                'status_code' => 403,
+                'message' => 'Please verify your email address before logging in.',
+                'verification_token' => $verificationToken,
+            ];
+        }*/
+
+        if (!$user->is_profile_completed)
         {
             return [
                 'status_code' => 403,
@@ -33,12 +44,15 @@ class LoginService
             ];
         }
 
+        $user->load($user->account_type);
+
         $token = JWTAuth::fromUser($user);
 
         return [
             'status_code' => 200,
             'token' => $token,
             'user' => $user,
+            'profile' => $user->{$user->account_type},
             'message' => 'Login successful'
         ];
     }
@@ -47,10 +61,14 @@ class LoginService
     {
         $user = auth()->guard('api')->user();
 
+        $user->load($user->account_type);
+
         return 
         [
             'status_code' => 200,
-            'user' => $user
+            'user' => $user,
+            'profile' => $user->{$user->account_type},
+            'message' => 'User profile retrieved successfully'
         ];
     }
 

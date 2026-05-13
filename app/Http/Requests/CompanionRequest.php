@@ -25,7 +25,6 @@ class CompanionRequest extends FormRequest
         return [
             'skills' => 'required|string|max:1000',
             'years_of_experience' => 'required|string|max:255',
-            'availability' => 'required|string|max:255',
             'certificates' => 'required|string|max:1000',
         ];
     }

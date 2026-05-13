@@ -12,7 +12,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class RegistrationService
 {
-    public function register($request)
+    public function __construct(private EmailVerificationService $emailVerificationService) {}
+
+    public function register($request): array
     {
         $user = User::create([
             'email' => $request->email,
@@ -20,28 +22,30 @@ class RegistrationService
             'full_name' => $request->full_name,
             'phone_number' => $request->phone_number,
             'account_type' => $request->account_type,
-            'is_profile_completed' => $request->is_profile_completed
+            'is_profile_completed' => $request->is_profile_completed,
         ]);
+
+        $this->emailVerificationService->sendVerificationCode($user);
 
         $token = JWTAuth::fromUser($user);
 
         return [
             'user' => $user,
+            'message' => 'Registration successful. Please check your email for the verification code.',
             'token' => $token,
-            'message' => 'User registered successfully',
-            'status_code' => 200
+            'status_code' => 201,
         ];
     }
 
-    public function nurseRegister($request)
+    public function nurseRegister($request): array
     {
         $user = auth()->guard('api')->user();
 
-        if (Nurse::where('user_id', $user->id)->exists()) 
+        if (Nurse::where('user_id', $user->id)->exists())
         {
             return [
                 'message' => 'Nurse profile already exists',
-                'status_code' => 400
+                'status_code' => 400,
             ];
         }
 
@@ -52,30 +56,28 @@ class RegistrationService
             'license_number' => $request->license_number,
             'work_place' => $request->work_place,
             'about_you' => $request->about_you,
-            
         ]);
 
         $user->update([
-            'is_profile_completed' => true
+            'is_profile_completed' => true,
         ]);
 
-        return 
-        [
+        return [
             'nurse' => $nurse,
             'message' => 'Nurse registered successfully',
-            'status_code' => 200   
+            'status_code' => 200,
         ];
     }
 
-    public function companionRegister($request)
+    public function companionRegister($request): array
     {
         $user = auth()->guard('api')->user();
 
-        if (Companion::where('user_id', $user->id)->exists()) 
+        if (Companion::where('user_id', $user->id)->exists())
         {
             return [
                 'message' => 'Companion profile already exists',
-                'status_code' => 400
+                'status_code' => 400,
             ];
         }
 
@@ -88,32 +90,31 @@ class RegistrationService
         ]);
 
         $user->update([
-            'is_profile_completed' => true
+            'is_profile_completed' => true,
         ]);
 
-        return 
-        [
+        return [
             'companion' => $companion,
             'message' => 'Companion registered successfully',
-            'status_code' => 200
+            'status_code' => 200,
         ];
     }
 
-    public function driverRegister($request)
+    public function driverRegister($request): array
     {
         $user = auth()->guard('api')->user();
 
-        if (Driver::where('user_id', $user->id)->exists()) 
+        if (Driver::where('user_id', $user->id)->exists())
         {
             return [
                 'message' => 'Driver profile already exists',
-                'status_code' => 400
+                'status_code' => 400,
             ];
         }
 
         $carImagePath = null;
 
-        if ($request->hasFile('car_image')) 
+        if ($request->hasFile('car_image'))
         {
             $carImagePath = $request->file('car_image')->store('drivers/cars', 'public');
         }
@@ -131,31 +132,30 @@ class RegistrationService
         ]);
 
         $user->update([
-            'is_profile_completed' => true
+            'is_profile_completed' => true,
         ]);
 
-        return 
-        [
+        return [
             'driver' => [
                 ...$driver->toArray(),
-                'car_image_url' => $driver->car_image 
+                'car_image_url' => $driver->car_image
                     ? asset('storage/' . $driver->car_image)
                     : null,
             ],
             'message' => 'Driver registered successfully',
-            'status_code' => 200
+            'status_code' => 200,
         ];
     }
 
-    public function familyMemberRegister($request)
+    public function familyMemberRegister($request): array
     {
         $user = auth()->guard('api')->user();
 
-        if (FamilyMember::where('user_id', $user->id)->exists()) 
+        if (FamilyMember::where('user_id', $user->id)->exists())
         {
             return [
                 'message' => 'Family member profile already exists',
-                'status_code' => 400
+                'status_code' => 400,
             ];
         }
 
@@ -170,26 +170,25 @@ class RegistrationService
         ]);
 
         $user->update([
-            'is_profile_completed' => true
+            'is_profile_completed' => true,
         ]);
 
-        return 
-        [
+        return [
             'familyMember' => $familyMember,
             'message' => 'Family member registered successfully',
-            'status_code' => 200
+            'status_code' => 200,
         ];
     }
 
-    public function elderRegister($request)
+    public function elderRegister($request): array
     {
         $user = auth()->guard('api')->user();
 
-        if (Elder::where('user_id', $user->id)->exists()) 
+        if (Elder::where('user_id', $user->id)->exists())
         {
             return [
                 'message' => 'Elder profile already exists',
-                'status_code' => 400
+                'status_code' => 400,
             ];
         }
 
@@ -208,15 +207,13 @@ class RegistrationService
         ]);
 
         $user->update([
-            'is_profile_completed' => true
+            'is_profile_completed' => true,
         ]);
 
-        return 
-        [
+        return [
             'elderly' => $elderlies,
             'message' => 'Elderly registered successfully',
-            'status_code' => 200
+            'status_code' => 200,
         ];
     }
-
 }

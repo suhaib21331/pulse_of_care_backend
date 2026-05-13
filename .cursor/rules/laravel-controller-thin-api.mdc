@@ -1,0 +1,38 @@
+---
+description: Keep Laravel API controllers thin and consistent
+alwaysApply: true
+---
+
+# Laravel API Controller Rule
+
+## Responsibilities
+
+- Controllers should only orchestrate request flow.
+- Use Form Requests for validation and authorization.
+- Delegate business logic to service classes in `app/Services`.
+- Return consistent JSON responses (status code and shape).
+
+## Controller Pattern
+
+```php
+// ❌ BAD: domain logic inside controller
+public function store(Request $request)
+{
+    $provider = Provider::where('type', $request->type)->first();
+    // complex matching logic...
+}
+
+// ✅ GOOD: thin controller delegates to service
+public function store(ServiceRequest $request, BookingService $bookingService): JsonResponse
+{
+    $result = $bookingService->createBooking($request->validated());
+
+    return response()->json($result, 201);
+}
+```
+
+## Avoid
+
+- Inline validation in controllers when a Form Request exists.
+- Duplicating query or matching logic across controller actions.
+- Returning inconsistent response structures between endpoints.

@@ -18,12 +18,16 @@ class Companion extends Model
         'user_id',
         'skills',
         'years_of_experience',
-        'availability',
         'certificates',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function location()
+    {
+        return $this->morphOne(ProviderLocation::class, 'provider');
     }
 }

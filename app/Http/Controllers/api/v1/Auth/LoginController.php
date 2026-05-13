@@ -18,11 +18,12 @@ class LoginController
     {
         $result = $this->authService->login($request);
 
-        if (($result['status_code']) !== 200) 
+        if ($result['status_code'] !== 200)
         {
             return response()->json([
                 'message' => $result['message'],
                 'user' => $result['user'] ?? null,
+                'verification_token' => $result['verification_token'] ?? null,
             ], $result['status_code']);
         }
 

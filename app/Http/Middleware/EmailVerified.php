@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProfileCompleted
+class EmailVerified
 {
     /**
      * Handle an incoming request.
@@ -17,9 +17,11 @@ class ProfileCompleted
     {
         $user = auth()->guard('api')->user();
 
-        if (!$user->is_profile_completed) {
+        if (!$user->email_verified_at) 
+        {
             return response()->json([
-                'message' => 'Please complete your profile registration first',
+                'message' => 'Please verify your email address first',
+                'user' => $user
             ], 403);
         }
 

@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class NurseRequest extends FormRequest
+class UploadProfileImageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,16 +20,20 @@ class NurseRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-
-   
     public function rules(): array
     {
         return [
-            'major' => 'required|string|max:255',
-            'years_of_experience' => 'required|string|max:255',
-            'license_number' => 'required|min:5|max:7|unique:nurses,license_number',
-            'work_place' => 'required|string|max:255',
-            'about_you' => 'required|string|max:1000',
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'image.required' => 'A profile image is required.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a jpeg, png, jpg, or webp file.',
+            'image.max' => 'The image must not exceed 2MB.',
         ];
     }
 }

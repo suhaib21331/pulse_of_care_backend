@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class NurseRequest extends FormRequest
+class ChangePhoneNumberRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -20,16 +20,19 @@ class NurseRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-
-   
     public function rules(): array
     {
         return [
-            'major' => 'required|string|max:255',
-            'years_of_experience' => 'required|string|max:255',
-            'license_number' => 'required|min:5|max:7|unique:nurses,license_number',
-            'work_place' => 'required|string|max:255',
-            'about_you' => 'required|string|max:1000',
+            'phone_number' => 'required|string|regex:/^07[789][0-9]{7}$/',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'phone_number.required' => 'Phone number is required',
+            'phone_number.string' => 'Phone number must be a string',
+            'phone_number.regex' => 'Phone number must start with 07 followed by 7,8,9 and 7 digits',
         ];
     }
 }

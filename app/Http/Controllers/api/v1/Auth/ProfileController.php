@@ -22,11 +22,12 @@ class ProfileController
         ], $result['status_code']);
     }
 
-    public function changePhoneNumber(ChangePhoneNumberRequest $request)
+    public function changePhoneNumber(ChangePhoneNumberRequest $request): JsonResponse
     {
         $result = $this->profileService->changePhoneNumber($request);
 
         return response()->json([
+            'status_code' => $result['status_code'],
             'message' => $result['message'],
         ], $result['status_code']);
     }
@@ -37,6 +38,7 @@ class ProfileController
 
         return response()->json([
             'message' => $result['message'],
+            'status_code' => $result['status_code'],
         ], $result['status_code']);
     }
 

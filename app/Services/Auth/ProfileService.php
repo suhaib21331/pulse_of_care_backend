@@ -51,6 +51,15 @@ class ProfileService
     {
         $user = auth()->guard('api')->user();
 
+        if ($user->email === $request->email) 
+        {
+            return 
+            [
+                'status_code' => 400,
+                'message' => 'New email must be different from current email.',
+            ];
+        }
+
         if (! Hash::check($request->current_password, $user->password)) 
         {
             return [

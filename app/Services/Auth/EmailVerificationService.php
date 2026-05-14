@@ -52,21 +52,31 @@ class EmailVerificationService
             ];
         }
 
-        $user->update([
-            'email_verified_at' => now(),
-            'email_verification_code' => null,
-            'email_verification_expires_at' => null,
-        ]);
+      $user->update([
+    'email_verified_at' => now(),
+    'email_verification_code' => null,
+    'email_verification_expires_at' => null,
+]);
 
-        $accessToken = JWTAuth::fromUser($user);
+$user = $user->fresh();
 
-        return 
-        [
-            'status_code' => 200,
-            'message' => 'Email verified successfully.',
-            'token' => $accessToken,
-            'user' => $user,
-        ];
+$accessToken = JWTAuth::fromUser($user);
+
+return 
+[
+    'status_code' => 200,
+    'message' => 'Email verified successfully.',
+    'token' => $accessToken,
+    'user' => [
+        'id' => $user->id,
+        'email' => $user->email,
+        'full_name' => $user->full_name,
+        'phone_number' => $user->phone_number,
+        'account_type' => $user->account_type,
+        'is_profile_completed' => $user->is_profile_completed,
+        'email_verified_at' => $user->email_verified_at,
+    ],
+];
     }
 
     public function resendCode(): array

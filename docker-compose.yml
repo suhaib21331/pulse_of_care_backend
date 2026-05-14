@@ -1,30 +1,38 @@
 version: '3.2'
 
 services:
-   db:
-      image: mariadb:latest
-      command: --lower_case_table_names=1
-      container_name: mysql-server-container
-      restart: always
-      ports:
-       - '3307:3306'   # 👈 غيرناه
-      environment:
-        MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      volumes:
-       - mysql_data_container:/var/lib/mysql
 
-   app:
-      depends_on:
-       - db
-      image: phpmyadmin/phpmyadmin
-      container_name: phpmyadmin2
-      restart: always
-      ports:
-       - '8082:80'   # 👈 غيرناه
-      environment:
-        PMA_HOST: db
-        UPLOAD_LIMIT: 2000M
-        MAX_EXECUTION_TIME: 3600
+  db:
+    image: mariadb:latest
+    command: --lower_case_table_names=1
+    container_name: mysql-server-container
+    restart: always
+    ports:
+      - '3307:3306'
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+      - mysql_data_container:/var/lib/mysql
+
+  app:
+    depends_on:
+      - db
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin2
+    restart: always
+    ports:
+      - '8082:80'
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 2000M
+      MAX_EXECUTION_TIME: 3600
+
+  redis:
+    image: redis:latest
+    container_name: redis-container
+    restart: always
+    ports:
+      - "6379:6379"
 
 volumes:
   mysql_data_container:

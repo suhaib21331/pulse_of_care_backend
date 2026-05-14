@@ -20,7 +20,7 @@ class LoginService
             ];
         }
 
-        /*if (!$user->email_verified_at)
+       if (!$user->email_verified_at)
         {
             $verificationToken = JWTAuth::claims(['purpose' => 'email_verification'])->fromUser($user);
 
@@ -29,20 +29,26 @@ class LoginService
                 'message' => 'Please verify your email address before logging in.',
                 'verification_token' => $verificationToken,
             ];
-        }*/
-
-        if (!$user->is_profile_completed)
-        {
-            return [
-                'status_code' => 403,
-                'message' => 'Please complete your profile first',
-                'user' => [
-                    'id' => $user->id,
-                    'account_type' => $user->account_type,
-                    'is_profile_completed' => $user->is_profile_completed,
-                ]
-            ];
         }
+if (!$user->is_profile_completed)
+{
+    $token = JWTAuth::fromUser($user);
+
+    return [
+        'status_code' => 403,
+        'message' => 'Please complete your profile first',
+        'token' => $token,
+        'user' => [
+            'id' => $user->id,
+            'email' => $user->email,
+            'full_name' => $user->full_name,
+            'phone_number' => $user->phone_number,
+            'account_type' => $user->account_type,
+            'is_profile_completed' => $user->is_profile_completed,
+            'email_verified_at' => $user->email_verified_at,
+        ],
+    ];
+}
 
         $user->load($user->account_type);
 

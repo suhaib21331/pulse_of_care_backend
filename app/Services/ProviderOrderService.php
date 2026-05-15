@@ -47,8 +47,7 @@ class ProviderOrderService
         $user = auth()->guard('api')->user();
         $provider = $this->resolveProviderProfile($user);
 
-        if ($provider === null) 
-        {
+        if ($provider === null) {
             return [
                 'status_code' => 403,
                 'message' => 'Provider profile not found.',
@@ -63,8 +62,7 @@ class ProviderOrderService
                 ->where('status', 'pending')
                 ->first();
 
-            if ($assignment === null) 
-            {
+            if ($assignment === null) {
                 return [
                     'status_code' => 404,
                     'message' => 'Assignment not found or no longer available.',
@@ -73,8 +71,7 @@ class ProviderOrderService
 
             $service = Service::lockForUpdate()->find($assignment->service_id);
 
-            if ($service === null || $service->status === 'accepted') 
-            {
+            if ($service === null || $service->status === 'accepted') {
                 return [
                     'status_code' => 409,
                     'message' => 'This order has already been accepted by another provider.',
@@ -177,6 +174,11 @@ class ProviderOrderService
                 'details' => $service->nurseService
                     ?? $service->driverService
                     ?? $service->companionService,
+                'elder' => [
+                    'id' => $service->elder?->id,
+                    'name' => $service->elder?->full_name,
+                    'phone' => $service->elder?->phone_number,
+                ],
             ],
         ];
     }

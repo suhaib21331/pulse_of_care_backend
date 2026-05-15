@@ -88,6 +88,7 @@ class DatabaseSeeder extends Seeder
                 'year_of_creation' => fake()->numberBetween(2012, 2024),
                 'car_color' => fake()->safeColorName(),
                 'car_image' => null,
+                'useful_for_elder'=>1
             ]);
         });
     }
@@ -100,6 +101,7 @@ class DatabaseSeeder extends Seeder
                 'skills' => implode(', ', fake()->words(4)),
                 'years_of_experience' => (string) fake()->numberBetween(1, 10),
                 'certificates' => implode(', ', fake()->words(3)),
+
             ]);
         });
     }

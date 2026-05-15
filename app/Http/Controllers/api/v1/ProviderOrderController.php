@@ -46,10 +46,11 @@ class ProviderOrderController
                 ], $result['status_code']);
             }
 
-            return response()->json([
-                'message' => $result['message'],
-                'order' => $result['order'],
-            ], 200);
+          return response()->json([
+    'message' => $result['message'],
+    'order' => $result['order'],
+    'provider' => $result['provider'],
+], 200);
         } catch (Throwable $exception) {
             report($exception);
 

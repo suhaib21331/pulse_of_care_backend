@@ -38,7 +38,9 @@ class ProviderOrderService
         return [
             'status_code' => 200,
             'count' => $assignments->count(),
-            'orders' => $assignments->map(fn (ServiceAssignment $assignment) => $this->formatAssignment($assignment)),
+            'orders' => $assignments
+                ->map(fn (ServiceAssignment $assignment) => $this->formatAssignment($assignment))
+                ->values(),
         ];
     }
 
@@ -71,7 +73,14 @@ class ProviderOrderService
 
             $service = Service::lockForUpdate()->find($assignment->service_id);
 
-            if ($service === null || $service->status === 'accepted') {
+            if ($service === null) {
+                return [
+                    'status_code' => 404,
+                    'message' => 'Service not found.',
+                ];
+            }
+
+            if ($service->status === 'accepted') {
                 return [
                     'status_code' => 409,
                     'message' => 'This order has already been accepted by another provider.',
@@ -91,17 +100,22 @@ class ProviderOrderService
                     'responded_at' => now(),
                 ]);
 
-            $service->update(['status' => 'accepted']);
+            $service->update([
+                'status' => 'accepted',
+            ]);
+
+            $assignment->load([
+                'service.nurseService',
+                'service.driverService',
+                'service.companionService',
+                'service.elder',
+            ]);
 
             return [
                 'status_code' => 200,
                 'message' => 'Order accepted successfully.',
-                'order' => $this->formatAssignment($assignment->load([
-                    'service.nurseService',
-                    'service.driverService',
-                    'service.companionService',
-                    'service.elder',
-                ])),
+                'order' => $this->formatAssignment($assignment),
+                'provider' => $this->formatProvider($provider, $user),
             ];
         });
     }
@@ -163,23 +177,37 @@ class ProviderOrderService
             'matching_score' => $assignment->matching_score,
             'responded_at' => $assignment->responded_at,
             'created_at' => $assignment->created_at,
+
             'service' => [
-                'id' => $service->id,
-                'service_type' => $service->service_type,
-                'service_condition' => $service->service_condition,
-                'service_address' => $service->service_address,
-                'service_latitude' => $service->service_latitude,
-                'service_longitude' => $service->service_longitude,
-                'status' => $service->status,
-                'details' => $service->nurseService
-                    ?? $service->driverService
-                    ?? $service->companionService,
+                'id' => $service?->id,
+                'service_type' => $service?->service_type,
+                'service_condition' => $service?->service_condition,
+                'service_address' => $service?->service_address,
+                'service_latitude' => $service?->service_latitude,
+                'service_longitude' => $service?->service_longitude,
+                'status' => $service?->status,
+
                 'elder' => [
-                    'id' => $service->elder?->id,
-                    'name' => $service->elder?->full_name,
-                    'phone' => $service->elder?->phone_number,
+                    'id' => $service?->elder?->id,
+                    'name' => $service?->elder?->full_name,
+                    'phone' => $service?->elder?->phone_number,
                 ],
+
+                'details' => $service?->nurseService
+                    ?? $service?->driverService
+                    ?? $service?->companionService,
             ],
+        ];
+    }
+
+    private function formatProvider(mixed $provider, mixed $user): array
+    {
+        return [
+            'id' => $provider->id,
+            'user_id' => $user->id,
+            'name' => $user->full_name,
+            'phone' => $user->phone_number,
+            'type' => $user->account_type,
         ];
     }
 }

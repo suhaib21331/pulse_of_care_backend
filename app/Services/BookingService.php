@@ -21,8 +21,7 @@ class BookingService
     {
         $elder = auth()->guard('api')->user();
 
-        $service = DB::transaction(function () use ($request, $elder): Service 
-        {
+        $service = DB::transaction(function () use ($request, $elder): Service {
             $service = Service::create([
                 'elder_id' => $elder->id,
                 'service_type' => $request['service_type'],
@@ -43,8 +42,7 @@ class BookingService
 
             $assignmentsCreated = $this->matchingService->createAssignmentsForService($service);
 
-            if ($assignmentsCreated > 0) 
-            {
+            if ($assignmentsCreated > 0) {
                 $service->update(['status' => 'assigned']);
             }
 
@@ -61,16 +59,16 @@ class BookingService
 
     private function createTypeSpecificService($serviceId, $request): void
     {
-        if ($request['service_type'] === 'nurse') 
-        {
+        if ($request['service_type'] === 'nurse') {
             NurseService::create([
                 'service_id' => $serviceId,
                 'nurse_major' => $request['nurse_major'],
+                'scheduled_date' => $request['scheduled_date'] ?? null,
+                'scheduled_time' => $request['scheduled_time'] ?? null,
             ]);
         }
 
-        if ($request['service_type'] === 'driver') 
-        {
+        if ($request['service_type'] === 'driver') {
             DriverService::create([
                 'service_id' => $serviceId,
                 'pickup_address' => $request['pickup_address'],
@@ -82,13 +80,14 @@ class BookingService
             ]);
         }
 
-        if ($request['service_type'] === 'companion') 
-        {
+        if ($request['service_type'] === 'companion') {
             CompanionService::create([
                 'service_id' => $serviceId,
                 'start_time' => $request['start_time'],
                 'end_time' => $request['end_time'],
                 'period' => $request['period'],
+                'scheduled_date' => $request['scheduled_date'] ?? null,
+                'scheduled_time' => $request['scheduled_time'] ?? null,
             ]);
         }
     }

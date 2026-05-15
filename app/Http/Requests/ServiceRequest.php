@@ -36,7 +36,8 @@ class ServiceRequest extends FormRequest
             case 'nurse':
                 $rules += [
                     'nurse_major' => 'required|string',
-
+                    'scheduled_date' => 'nullable|date_format:Y-m-d|after_or_equal:today',
+                    'scheduled_time' => 'nullable|date_format:H:i',
                 ];
                 break;
 
@@ -56,7 +57,8 @@ class ServiceRequest extends FormRequest
                     'start_time' => 'required|date_format:H:i',
                     'end_time' => 'required|date_format:H:i',
                     'period' => 'required|in:morning,evening,full_day',
-
+                    'scheduled_date' => 'nullable|date_format:Y-m-d|after_or_equal:today',
+                    'scheduled_time' => 'nullable|date_format:H:i',
                 ];
                 break;
         }

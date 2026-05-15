@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\api\v1\Auth;
 
-use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ChangeEmailRequest;
+use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\ChangePhoneNumberRequest;
 use App\Http\Requests\UploadProfileImageRequest;
 use App\Services\Auth\ProfileService;

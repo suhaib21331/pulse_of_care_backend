@@ -200,6 +200,8 @@ class RegistrationService
             'allergies' => $request->allergies,
             'can_walk' => $request->can_walk,
             'need_wheel_chair' => $request->need_wheel_chair,
+            'uses_diapers' => $request->uses_diapers,
+            'movement_level' => $request->movement_level,
             'city' => $request->city,
             'detailed_address' => $request->detailed_address,
             'notes' => $request->notes,

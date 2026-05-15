@@ -13,17 +13,16 @@ class AccountType
      *
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $accountType): Response
+    public function handle(Request $request, Closure $next, string ...$accountTypes): Response
     {
         $user = auth()->guard('api')->user();
 
-        if ($user->account_type === $accountType) 
-        {
+        if (in_array($user->account_type, $accountTypes, true)) {
             return $next($request);
         }
 
         return response()->json([
-            'message' => 'Unauthorized account type'
+            'message' => 'Unauthorized account type',
         ], 401);
     }
 }

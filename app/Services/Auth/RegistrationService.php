@@ -163,6 +163,7 @@ class RegistrationService
             'user_id' => $user->id,
             'kinship' => $request->kinship,
             'elder_name' => $request->elder_name,
+            'movement_level' => $request->movement_level,       
             'elder_age' => $request->elder_age,
             'city' => $request->city,
             'detailed_address' => $request->detailed_address,

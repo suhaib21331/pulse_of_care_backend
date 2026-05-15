@@ -23,6 +23,7 @@ class FamilyMember extends Model
         'elder_name',
         'elder_age',
         'uses_diapers',
+        'movement_level',
         'need_wheel_chair',
         'health_condition',
         'city',

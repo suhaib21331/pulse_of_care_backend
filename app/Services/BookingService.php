@@ -21,7 +21,8 @@ class BookingService
     {
         $elder = auth()->guard('api')->user();
 
-        $service = DB::transaction(function () use ($request, $elder): Service {
+        $service = DB::transaction(function () use ($request, $elder): Service 
+        {
             $service = Service::create([
                 'elder_id' => $elder->id,
                 'service_type' => $request['service_type'],
@@ -42,7 +43,8 @@ class BookingService
 
             $assignmentsCreated = $this->matchingService->createAssignmentsForService($service);
 
-            if ($assignmentsCreated > 0) {
+            if ($assignmentsCreated > 0) 
+            {
                 $service->update(['status' => 'assigned']);
             }
 

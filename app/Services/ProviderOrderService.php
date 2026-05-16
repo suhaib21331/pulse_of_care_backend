@@ -120,6 +120,128 @@ class ProviderOrderService
         });
     }
 
+    public function getAcceptedOrder(): array
+    {
+        $user = auth()->guard('api')->user();
+        $provider = $this->resolveProviderProfile($user);
+
+        if ($provider === null) {
+            return [
+                'status_code' => 403,
+                'message' => 'Provider profile not found.',
+            ];
+        }
+
+        $assignment = ServiceAssignment::with([
+            'service.nurseService',
+            'service.driverService',
+            'service.companionService',
+            'service.elder',
+        ])
+            ->where('provider_id', $provider->id)
+            ->where('provider_type', $user->account_type)
+            ->where('status', 'accepted')
+            ->latest()
+            ->first();
+
+        if ($assignment === null) {
+            return [
+                'status_code' => 404,
+                'message' => 'No accepted order found.',
+            ];
+        }
+
+        return [
+            'status_code' => 200,
+            'order' => $this->formatAssignment($assignment),
+            'provider' => $this->formatProvider($provider, $user),
+        ];
+    }
+
+    public function markArrived(string $serviceId): array
+    {
+        $user = auth()->guard('api')->user();
+        $provider = $this->resolveProviderProfile($user);
+
+        if ($provider === null) {
+            return [
+                'status_code' => 403,
+                'message' => 'Provider profile not found.',
+            ];
+        }
+
+        $assignment = ServiceAssignment::where('service_id', $serviceId)
+            ->where('provider_id', $provider->id)
+            ->where('provider_type', $user->account_type)
+            ->where('status', 'accepted')
+            ->first();
+
+        if ($assignment === null) {
+            return [
+                'status_code' => 404,
+                'message' => 'No accepted assignment found for this service.',
+            ];
+        }
+
+        $service = Service::find($serviceId);
+
+        if ($service === null || $service->status !== 'accepted') {
+            return [
+                'status_code' => 409,
+                'message' => 'Service is not in an accepted state.',
+            ];
+        }
+
+        $service->update(['status' => 'in_progress']);
+
+        return [
+            'status_code' => 200,
+            'message' => 'Marked as arrived. Service is now in progress.',
+        ];
+    }
+
+    public function completeService(string $serviceId): array
+    {
+        $user = auth()->guard('api')->user();
+        $provider = $this->resolveProviderProfile($user);
+
+        if ($provider === null) {
+            return [
+                'status_code' => 403,
+                'message' => 'Provider profile not found.',
+            ];
+        }
+
+        $assignment = ServiceAssignment::where('service_id', $serviceId)
+            ->where('provider_id', $provider->id)
+            ->where('provider_type', $user->account_type)
+            ->where('status', 'accepted')
+            ->first();
+
+        if ($assignment === null) {
+            return [
+                'status_code' => 404,
+                'message' => 'No accepted assignment found for this service.',
+            ];
+        }
+
+        $service = Service::find($serviceId);
+
+        if ($service === null || $service->status !== 'in_progress') {
+            return [
+                'status_code' => 409,
+                'message' => 'Service must be in progress before it can be completed.',
+            ];
+        }
+
+        $service->update(['status' => 'completed']);
+
+        return [
+            'status_code' => 200,
+            'message' => 'Service completed successfully.',
+        ];
+    }
+
     public function rejectOrder(int $assignmentId): array
     {
         $user = auth()->guard('api')->user();

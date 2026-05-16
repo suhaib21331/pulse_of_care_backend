@@ -44,8 +44,14 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('orders')->group(function () {
             Route::get('/', [ProviderOrderController::class, 'index']);
+            Route::get('/accepted', [ProviderOrderController::class, 'accepted']);
             Route::post('/{assignment}/accept', [ProviderOrderController::class, 'accept']);
             Route::post('/{assignment}/reject', [ProviderOrderController::class, 'reject']);
+        });
+
+        Route::prefix('services')->group(function () {
+            Route::post('/{service}/arrived', [ProviderOrderController::class, 'arrived']);
+            Route::post('/{service}/complete', [ProviderOrderController::class, 'complete']);
         });
     });
 });

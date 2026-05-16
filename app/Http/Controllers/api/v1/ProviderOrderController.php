@@ -46,16 +46,87 @@ class ProviderOrderController
                 ], $result['status_code']);
             }
 
-          return response()->json([
-    'message' => $result['message'],
-    'order' => $result['order'],
-    'provider' => $result['provider'],
-], 200);
+            return response()->json([
+                'message' => $result['message'],
+                'order' => $result['order'],
+                'provider' => $result['provider'],
+            ], 200);
         } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
                 'message' => 'Unable to accept order at this time.',
+            ], 500);
+        }
+    }
+
+    public function accepted(): JsonResponse
+    {
+        try {
+            $result = $this->providerOrderService->getAcceptedOrder();
+
+            if ($result['status_code'] !== 200) {
+                return response()->json([
+                    'message' => $result['message'],
+                ], $result['status_code']);
+            }
+
+            return response()->json([
+                'message' => 'Accepted order retrieved successfully.',
+                'order' => $result['order'],
+                'provider' => $result['provider'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to retrieve accepted order at this time.',
+            ], 500);
+        }
+    }
+
+    public function arrived(string $service): JsonResponse
+    {
+        try {
+            $result = $this->providerOrderService->markArrived($service);
+
+            if ($result['status_code'] !== 200) {
+                return response()->json([
+                    'message' => $result['message'],
+                ], $result['status_code']);
+            }
+
+            return response()->json([
+                'message' => $result['message'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to mark as arrived at this time.',
+            ], 500);
+        }
+    }
+
+    public function complete(string $service): JsonResponse
+    {
+        try {
+            $result = $this->providerOrderService->completeService($service);
+
+            if ($result['status_code'] !== 200) {
+                return response()->json([
+                    'message' => $result['message'],
+                ], $result['status_code']);
+            }
+
+            return response()->json([
+                'message' => $result['message'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to complete service at this time.',
             ], 500);
         }
     }

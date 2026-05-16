@@ -8,7 +8,7 @@ use App\Http\Controllers\api\v1\ProviderOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-Route::middleware('auth:api')->post('/service', [BookingController::class, 'createBooking'])->middleware(['account.type:elderly,family_member,family-member']);
+    Route::middleware('auth:api')->post('/service', [BookingController::class, 'createBooking'])->middleware(['account.type:elderly,family_member,family-member']);
     Route::prefix('auth')->group(function () {
         Route::post('/register', [RegistrationController::class, 'register']);
         Route::post('/login', [LoginController::class, 'login']);
@@ -33,6 +33,9 @@ Route::middleware('auth:api')->post('/service', [BookingController::class, 'crea
             });
         });
     });
+
+    Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
+        ->get('/services/{service}/status', [BookingController::class, 'status']);
 
     Route::prefix('provider')->middleware(['auth:api', 'email.verified', 'profile.completed'])->group(function () {
         Route::prefix('orders')->middleware(['account.type:nurse,driver,companion'])->group(function () {

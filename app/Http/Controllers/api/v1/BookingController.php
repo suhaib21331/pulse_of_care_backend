@@ -16,8 +16,7 @@ class BookingController
 
     public function createBooking(ServiceRequest $request): JsonResponse
     {
-        try 
-        {
+        try {
             $service = $this->bookingService->createBooking($request->validated());
 
             return response()->json([
@@ -25,16 +24,39 @@ class BookingController
                 'service' => $service,
                 'status_code' => 201,
             ], 201);
-        } 
-        
-        catch (Throwable $exception) 
-        {
+        } catch (Throwable $exception) {
             report($exception);
 
             return response()->json([
                 'message' => 'Unable to create service booking at this time.',
                 'service' => null,
                 'status_code' => 500,
+            ], 500);
+        }
+    }
+
+    public function status(string $service): JsonResponse
+    {
+        try {
+            $result = $this->bookingService->getBookingStatus($service);
+
+            if ($result['status_code'] !== 200) {
+                return response()->json([
+                    'message' => $result['message'],
+                ], $result['status_code']);
+            }
+
+            return response()->json([
+                'message' => $result['message'],
+                'service' => $result['service'],
+                'assignments' => $result['assignments'],
+                'accepted_provider' => $result['accepted_provider'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to retrieve booking status at this time.',
             ], 500);
         }
     }

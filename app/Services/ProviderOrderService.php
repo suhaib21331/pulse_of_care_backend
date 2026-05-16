@@ -2,15 +2,19 @@
 
 namespace App\Services;
 
+use App\Events\CustomerOrderAccepted;
 use App\Models\Companion;
 use App\Models\Driver;
 use App\Models\Nurse;
 use App\Models\Service;
 use App\Models\ServiceAssignment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 class ProviderOrderService
 {
+    public function __construct(private NotificationService $notificationService) {}
+
     public function getPendingOrders(): array
     {
         $user = auth()->guard('api')->user();
@@ -110,6 +114,8 @@ class ProviderOrderService
                 'service.companionService',
                 'service.elder',
             ]);
+
+            $this->dispatchCustomerAcceptedNotification($service, $assignment, $provider, $user);
 
             return [
                 'status_code' => 200,
@@ -276,6 +282,45 @@ class ProviderOrderService
             'status_code' => 200,
             'message' => 'Order rejected successfully.',
         ];
+    }
+
+    private function dispatchCustomerAcceptedNotification(
+        Service $service,
+        ServiceAssignment $assignment,
+        mixed $provider,
+        mixed $providerUser
+    ): void {
+        $elderUserId = $service->elder_id;
+        $elder = User::find($elderUserId);
+
+        if ($elder === null) {
+            return;
+        }
+
+        $payload = [
+            'type' => 'customer_order_accepted',
+            'message' => 'A '.$providerUser->account_type.' accepted your order.',
+            'service_id' => $service->id,
+            'assignment_id' => $assignment->id,
+            'provider' => [
+                'type' => $providerUser->account_type,
+                'name' => $providerUser->full_name,
+                'phone' => $providerUser->phone_number,
+                'distance_km' => $assignment->distance_km,
+            ],
+        ];
+
+        $this->notificationService->create($elderUserId, 'customer_order_accepted', $payload);
+
+        broadcast(new CustomerOrderAccepted(
+            elderUserId: $elderUserId,
+            serviceId: $service->id,
+            assignmentId: $assignment->id,
+            providerType: $providerUser->account_type,
+            providerName: $providerUser->full_name,
+            providerPhone: $providerUser->phone_number,
+            distanceKm: (float) $assignment->distance_km,
+        ));
     }
 
     private function resolveProviderProfile(mixed $user): Nurse|Driver|Companion|null

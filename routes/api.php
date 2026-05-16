@@ -4,8 +4,11 @@ use App\Http\Controllers\api\v1\Auth\LoginController;
 use App\Http\Controllers\api\v1\Auth\ProfileController;
 use App\Http\Controllers\api\v1\Auth\RegistrationController;
 use App\Http\Controllers\api\v1\BookingController;
+use App\Http\Controllers\api\v1\NotificationController;
 use App\Http\Controllers\api\v1\ProviderLocationController;
 use App\Http\Controllers\api\v1\ProviderOrderController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -52,6 +55,16 @@ Route::prefix('v1')->group(function () {
         Route::prefix('services')->group(function () {
             Route::post('/{service}/arrived', [ProviderOrderController::class, 'arrived']);
             Route::post('/{service}/complete', [ProviderOrderController::class, 'complete']);
+        });
+    });
+
+    Route::middleware(['auth:api'])->group(function () {
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
+
+        // Broadcast channel auth for JWT-authenticated Flutter clients.
+        Route::post('/broadcasting/auth', function (Request $request) {
+            return Broadcast::auth($request);
         });
     });
 });

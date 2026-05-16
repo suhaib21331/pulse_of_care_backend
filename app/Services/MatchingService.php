@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\ProviderOrderReceived;
 use App\Models\Companion;
 use App\Models\Driver;
 use App\Models\Nurse;
@@ -12,12 +13,13 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MatchingService
 {
+    public function __construct(private NotificationService $notificationService) {}
+
     public function createAssignmentsForService(Service $service): int
     {
         [$latitude, $longitude] = $this->resolveMatchingCoordinates($service);
 
-        if ($latitude === null || $longitude === null) 
-        {
+        if ($latitude === null || $longitude === null) {
             return 0;
         }
 
@@ -40,15 +42,12 @@ class MatchingService
             ->take(3)
             ->values();
 
-        if ($locations->isEmpty()) 
-        {
+        if ($locations->isEmpty()) {
             return 0;
         }
 
-        $assignments = $locations->map(function (ProviderLocation $location) use ($service): array 
-        {
-            return 
-            [
+        $assignments = $locations->map(function (ProviderLocation $location) use ($service): array {
+            return [
                 'service_id' => $service->id,
                 'provider_id' => $location->provider_id,
                 'provider_type' => $this->resolveProviderTypeLabel($service),
@@ -62,7 +61,49 @@ class MatchingService
 
         ServiceAssignment::insert($assignments);
 
+        $this->dispatchProviderNotifications($service);
+
         return count($assignments);
+    }
+
+    private function dispatchProviderNotifications(Service $service): void
+    {
+        $createdAssignments = ServiceAssignment::where('service_id', $service->id)
+            ->where('status', 'pending')
+            ->get();
+
+        $providerClass = $this->resolveProviderMorphType($service);
+
+        foreach ($createdAssignments as $assignment) {
+            $provider = $providerClass::with('user')->find($assignment->provider_id);
+
+            if ($provider === null || $provider->user === null) {
+                continue;
+            }
+
+            $providerUserId = $provider->user->id;
+
+            $payload = [
+                'type' => 'provider_order_received',
+                'message' => 'There is a new order for you.',
+                'assignment_id' => $assignment->id,
+                'service_id' => $service->id,
+                'service_type' => $assignment->provider_type,
+                'distance_km' => $assignment->distance_km,
+                'matching_score' => $assignment->matching_score,
+            ];
+
+            $this->notificationService->create($providerUserId, 'provider_order_received', $payload);
+
+            broadcast(new ProviderOrderReceived(
+                providerUserId: $providerUserId,
+                assignmentId: $assignment->id,
+                serviceId: $service->id,
+                serviceType: $assignment->provider_type,
+                distanceKm: (float) $assignment->distance_km,
+                matchingScore: (float) $assignment->matching_score,
+            ));
+        }
     }
 
     private function resolveProviderQuery(Service $service): Builder

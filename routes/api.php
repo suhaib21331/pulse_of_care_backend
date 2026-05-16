@@ -45,6 +45,9 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
         ->get('/family-member/requests', [BookingController::class, 'requests']);
 
+    Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
+        ->delete('/services/{service}', [BookingController::class, 'cancel']);
+
     Route::prefix('provider')->middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:nurse,driver,companion'])->group(function () {
         Route::post('/location', [ProviderLocationController::class, 'updateLocation']);
         Route::post('/availability', [ProviderLocationController::class, 'updateAvailability']);

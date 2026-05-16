@@ -196,6 +196,42 @@ class BookingService
         return [null, null];
     }
 
+    public function cancelRequest(string $serviceId): array
+    {
+        $user = auth()->guard('api')->user();
+
+        $service = Service::where('id', $serviceId)
+            ->where('elder_id', $user->id)
+            ->first();
+
+        if ($service === null) {
+            return [
+                'status_code' => 404,
+                'message' => 'Request not found.',
+            ];
+        }
+
+        if (! in_array($service->status, ['pending', 'assigned'], true)) {
+            return [
+                'status_code' => 409,
+                'message' => 'This request cannot be cancelled. It has already been accepted or completed.',
+            ];
+        }
+
+        DB::transaction(function () use ($service): void {
+            ServiceAssignment::where('service_id', $service->id)
+                ->whereIn('status', ['pending'])
+                ->update(['status' => 'expired', 'responded_at' => now()]);
+
+            $service->update(['status' => 'cancelled']);
+        });
+
+        return [
+            'status_code' => 200,
+            'message' => 'Request cancelled successfully.',
+        ];
+    }
+
     private function resolveAcceptedProvider(ServiceAssignment $assignment): array
     {
         $provider = match ($assignment->provider_type) {

@@ -77,4 +77,21 @@ class BookingController
             ], 500);
         }
     }
+
+    public function cancel(string $service): JsonResponse
+    {
+        try {
+            $result = $this->bookingService->cancelRequest($service);
+
+            return response()->json([
+                'message' => $result['message'],
+            ], $result['status_code']);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to cancel request at this time.',
+            ], 500);
+        }
+    }
 }

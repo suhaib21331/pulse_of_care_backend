@@ -29,6 +29,7 @@ class ProviderLocationController
 
             return response()->json([
                 'message' => 'Unable to update location at this time.',
+                'error' => $exception->getMessage(),
                 'status_code' => 500,
             ], 500);
         }
@@ -50,6 +51,7 @@ class ProviderLocationController
 
             return response()->json([
                 'message' => 'Unable to update availability at this time.',
+                'error' => $exception->getMessage(),
                 'status_code' => 500,
             ], 500);
         }

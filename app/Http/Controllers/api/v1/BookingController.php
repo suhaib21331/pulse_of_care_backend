@@ -60,4 +60,21 @@ class BookingController
             ], 500);
         }
     }
+
+    public function requests(): JsonResponse
+    {
+        try {
+            $result = $this->bookingService->getCustomerRequests();
+
+            return response()->json([
+                'data' => $result['data'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to retrieve requests at this time.',
+            ], 500);
+        }
+    }
 }

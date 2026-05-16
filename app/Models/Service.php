@@ -48,4 +48,9 @@ class Service extends Model
     {
         return $this->hasMany(ServiceAssignment::class, 'service_id');
     }
+
+    public function acceptedAssignment()
+    {
+        return $this->hasOne(ServiceAssignment::class, 'service_id')->where('status', 'accepted');
+    }
 }

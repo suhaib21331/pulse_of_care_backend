@@ -118,6 +118,84 @@ class BookingService
         ];
     }
 
+    public function getCustomerRequests(): array
+    {
+        $user = auth()->guard('api')->user();
+
+        $services = Service::with([
+            'nurseService',
+            'driverService',
+            'companionService',
+            'acceptedAssignment',
+        ])
+            ->where('elder_id', $user->id)
+            ->latest()
+            ->get();
+
+        return [
+            'status_code' => 200,
+            'data' => $services->map(fn (Service $service) => $this->formatRequest($service))->values(),
+        ];
+    }
+
+    private function formatRequest(Service $service): array
+    {
+        $accepted = $service->acceptedAssignment;
+        $providerName = null;
+        $providerPhone = null;
+
+        if ($accepted !== null) {
+            $provider = match ($accepted->provider_type) {
+                'nurse' => Nurse::with('user')->find($accepted->provider_id),
+                'driver' => Driver::with('user')->find($accepted->provider_id),
+                'companion' => Companion::with('user')->find($accepted->provider_id),
+                default => null,
+            };
+
+            $providerName = $provider?->user?->full_name;
+            $providerPhone = $provider?->user?->phone_number;
+        }
+
+        [$date, $time] = $this->resolveSchedule($service);
+
+        return [
+            'id' => $service->id,
+            'service_type' => $service->service_type,
+            'service_condition' => $service->service_condition,
+            'status' => $service->status,
+            'address' => $service->service_type === 'driver'
+                ? ($service->driverService?->pickup_address ?? '')
+                : ($service->service_address ?? ''),
+            'date' => $date,
+            'time' => $time,
+            'notes' => '',
+            'provider_name' => $providerName,
+            'provider_phone' => $providerPhone,
+            'details' => $service->nurseService
+                ?? $service->driverService
+                ?? $service->companionService,
+        ];
+    }
+
+    private function resolveSchedule(Service $service): array
+    {
+        if ($service->service_type === 'nurse' && $service->nurseService !== null) {
+            return [
+                $service->nurseService->scheduled_date?->format('Y-m-d'),
+                $service->nurseService->scheduled_time,
+            ];
+        }
+
+        if ($service->service_type === 'companion' && $service->companionService !== null) {
+            return [
+                $service->companionService->scheduled_date?->format('Y-m-d'),
+                $service->companionService->scheduled_time,
+            ];
+        }
+
+        return [null, null];
+    }
+
     private function resolveAcceptedProvider(ServiceAssignment $assignment): array
     {
         $provider = match ($assignment->provider_type) {

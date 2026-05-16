@@ -42,6 +42,9 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
         ->get('/services/{service}/status', [BookingController::class, 'status']);
 
+    Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
+        ->get('/family-member/requests', [BookingController::class, 'requests']);
+
     Route::prefix('provider')->middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:nurse,driver,companion'])->group(function () {
         Route::post('/location', [ProviderLocationController::class, 'updateLocation']);
         Route::post('/availability', [ProviderLocationController::class, 'updateAvailability']);
@@ -67,5 +70,5 @@ Route::prefix('v1')->group(function () {
             return Broadcast::auth($request);
         });
     });
-    
+
 });

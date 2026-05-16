@@ -8,8 +8,7 @@ use App\Http\Controllers\api\v1\ProviderOrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
-    Route::middleware('auth:api')->post('/service', [BookingController::class, 'createBooking'])->middleware(['account.type:elderly,family-member']);
-
+Route::middleware('auth:api')->post('/service', [BookingController::class, 'createBooking'])->middleware(['account.type:elderly,family_member,family-member']);
     Route::prefix('auth')->group(function () {
         Route::post('/register', [RegistrationController::class, 'register']);
         Route::post('/login', [LoginController::class, 'login']);

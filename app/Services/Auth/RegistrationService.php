@@ -159,16 +159,21 @@ class RegistrationService
             ];
         }
 
-        $familyMember = FamilyMember::create([
-            'user_id' => $user->id,
-            'kinship' => $request->kinship,
-            'elder_name' => $request->elder_name,
-            'movement_level' => $request->movement_level,       
-            'elder_age' => $request->elder_age,
-            'city' => $request->city,
-            'detailed_address' => $request->detailed_address,
-            'notes' => $request->notes,
-        ]);
+       $familyMember = FamilyMember::create([
+    'user_id' => $user->id,
+    'kinship' => $request->kinship,
+    'elder_name' => $request->elder_name,
+    'elder_age' => $request->elder_age,
+
+    'uses_diapers' => $request->uses_diapers,
+    'movement_level' => $request->movement_level,
+    'need_wheel_chair' => $request->need_wheel_chair,
+    'health_condition' => $request->health_condition,
+
+    'city' => $request->city,
+    'detailed_address' => $request->detailed_address,
+    'notes' => $request->notes,
+]);
 
         $user->update([
             'is_profile_completed' => true,

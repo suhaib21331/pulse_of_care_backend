@@ -4,6 +4,7 @@ use App\Http\Controllers\api\v1\Auth\LoginController;
 use App\Http\Controllers\api\v1\Auth\ProfileController;
 use App\Http\Controllers\api\v1\Auth\RegistrationController;
 use App\Http\Controllers\api\v1\BookingController;
+use App\Http\Controllers\api\v1\ProviderLocationController;
 use App\Http\Controllers\api\v1\ProviderOrderController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,8 +38,11 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:elderly,family_member,family-member'])
         ->get('/services/{service}/status', [BookingController::class, 'status']);
 
-    Route::prefix('provider')->middleware(['auth:api', 'email.verified', 'profile.completed'])->group(function () {
-        Route::prefix('orders')->middleware(['account.type:nurse,driver,companion'])->group(function () {
+    Route::prefix('provider')->middleware(['auth:api', 'email.verified', 'profile.completed', 'account.type:nurse,driver,companion'])->group(function () {
+        Route::post('/location', [ProviderLocationController::class, 'updateLocation']);
+        Route::post('/availability', [ProviderLocationController::class, 'updateAvailability']);
+
+        Route::prefix('orders')->group(function () {
             Route::get('/', [ProviderOrderController::class, 'index']);
             Route::post('/{assignment}/accept', [ProviderOrderController::class, 'accept']);
             Route::post('/{assignment}/reject', [ProviderOrderController::class, 'reject']);

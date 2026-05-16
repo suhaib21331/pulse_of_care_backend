@@ -85,6 +85,7 @@ class BookingController
 
             return response()->json([
                 'message' => $result['message'],
+                'service' => $result['service'] ?? null,
             ], $result['status_code']);
         } catch (Throwable $exception) {
             report($exception);

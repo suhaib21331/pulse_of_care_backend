@@ -211,24 +211,28 @@ class BookingService
             ];
         }
 
-        if (! in_array($service->status, ['pending', 'assigned'], true)) {
+        if (in_array($service->status, ['in_progress', 'completed', 'cancelled'], true)) {
             return [
                 'status_code' => 409,
-                'message' => 'This request cannot be cancelled. It has already been accepted or completed.',
+                'message' => 'This request cannot be cancelled.',
             ];
         }
 
         DB::transaction(function () use ($service): void {
             ServiceAssignment::where('service_id', $service->id)
-                ->whereIn('status', ['pending'])
-                ->update(['status' => 'expired', 'responded_at' => now()]);
+                ->whereIn('status', ['pending', 'accepted'])
+                ->update(['status' => 'cancelled', 'responded_at' => now()]);
 
             $service->update(['status' => 'cancelled']);
         });
 
         return [
             'status_code' => 200,
-            'message' => 'Request cancelled successfully.',
+            'message' => 'Service cancelled successfully.',
+            'service' => [
+                'id' => $service->id,
+                'status' => 'cancelled',
+            ],
         ];
     }
 

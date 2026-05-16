@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::middleware('auth:api')->post('/service', [BookingController::class, 'createBooking'])->middleware(['account.type:elderly,family_member,family-member']);
+
     Route::prefix('auth')->group(function () {
         Route::post('/register', [RegistrationController::class, 'register']);
         Route::post('/login', [LoginController::class, 'login']);
@@ -62,9 +63,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/notifications', [NotificationController::class, 'index']);
         Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead']);
 
-        // Broadcast channel auth for JWT-authenticated Flutter clients.
         Route::post('/broadcasting/auth', function (Request $request) {
             return Broadcast::auth($request);
         });
     });
+    
 });

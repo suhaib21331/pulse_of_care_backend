@@ -312,15 +312,19 @@ class ProviderOrderService
 
         $this->notificationService->create($elderUserId, 'customer_order_accepted', $payload);
 
-        broadcast(new CustomerOrderAccepted(
-            elderUserId: $elderUserId,
-            serviceId: $service->id,
-            assignmentId: $assignment->id,
-            providerType: $providerUser->account_type,
-            providerName: $providerUser->full_name,
-            providerPhone: $providerUser->phone_number,
-            distanceKm: (float) $assignment->distance_km,
-        ));
+        try {
+            broadcast(new CustomerOrderAccepted(
+                elderUserId: $elderUserId,
+                serviceId: $service->id,
+                assignmentId: $assignment->id,
+                providerType: $providerUser->account_type,
+                providerName: $providerUser->full_name,
+                providerPhone: $providerUser->phone_number,
+                distanceKm: (float) $assignment->distance_km,
+            ));
+        } catch (\Throwable $e) {
+            report($e);
+        }
     }
 
     private function resolveProviderProfile(mixed $user): Nurse|Driver|Companion|null

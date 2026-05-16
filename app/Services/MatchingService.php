@@ -95,14 +95,18 @@ class MatchingService
 
             $this->notificationService->create($providerUserId, 'provider_order_received', $payload);
 
-            broadcast(new ProviderOrderReceived(
-                providerUserId: $providerUserId,
-                assignmentId: $assignment->id,
-                serviceId: $service->id,
-                serviceType: $assignment->provider_type,
-                distanceKm: (float) $assignment->distance_km,
-                matchingScore: (float) $assignment->matching_score,
-            ));
+            try {
+                broadcast(new ProviderOrderReceived(
+                    providerUserId: $providerUserId,
+                    assignmentId: $assignment->id,
+                    serviceId: $service->id,
+                    serviceType: $assignment->provider_type,
+                    distanceKm: (float) $assignment->distance_km,
+                    matchingScore: (float) $assignment->matching_score,
+                ));
+            } catch (\Throwable $e) {
+                report($e);
+            }
         }
     }
 

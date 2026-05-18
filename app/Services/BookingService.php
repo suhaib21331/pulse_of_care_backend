@@ -129,7 +129,7 @@ class BookingService
             'acceptedAssignment',
         ])
             ->where('elder_id', $user->id)
-            ->latest()
+            ->latest('created_at')
             ->get();
 
         return [
@@ -162,7 +162,7 @@ class BookingService
             'id' => $service->id,
             'service_type' => $service->service_type,
             'service_condition' => $service->service_condition,
-            'status' => $service->status,
+            'status' => (string) $service->status,
             'address' => $service->service_type === 'driver'
                 ? ($service->driverService?->pickup_address ?? '')
                 : ($service->service_address ?? ''),

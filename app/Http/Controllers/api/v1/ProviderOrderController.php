@@ -121,6 +121,7 @@ class ProviderOrderController
 
             return response()->json([
                 'message' => $result['message'],
+                'service' => $result['service'] ?? null,
             ], 200);
         } catch (Throwable $exception) {
             report($exception);

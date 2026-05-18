@@ -218,34 +218,59 @@ class ProviderOrderService
             ];
         }
 
-        $assignment = ServiceAssignment::where('service_id', $serviceId)
-            ->where('provider_id', $provider->id)
-            ->where('provider_type', $user->account_type)
-            ->where('status', 'accepted')
-            ->first();
+        return DB::transaction(function () use ($serviceId, $provider, $user): array {
+            $assignment = ServiceAssignment::lockForUpdate()
+                ->where('service_id', $serviceId)
+                ->where('provider_id', $provider->id)
+                ->where('provider_type', $user->account_type)
+                ->where('status', 'accepted')
+                ->first();
 
-        if ($assignment === null) {
+            if ($assignment === null) {
+                return [
+                    'status_code' => 404,
+                    'message' => 'No accepted assignment found for this service.',
+                ];
+            }
+
+            $service = Service::lockForUpdate()->find($serviceId);
+
+            if ($service === null) {
+                return [
+                    'status_code' => 404,
+                    'message' => 'Service not found.',
+                ];
+            }
+
+            if ($service->status === 'completed') {
+                return [
+                    'status_code' => 200,
+                    'message' => 'Service completed successfully.',
+                    'service' => [
+                        'id' => $service->id,
+                        'status' => $service->status,
+                    ],
+                ];
+            }
+
+            if (! in_array($service->status, ['accepted', 'in_progress'], true)) {
+                return [
+                    'status_code' => 409,
+                    'message' => 'Service must be accepted or in progress before it can be completed.',
+                ];
+            }
+
+            $service->update(['status' => 'completed']);
+
             return [
-                'status_code' => 404,
-                'message' => 'No accepted assignment found for this service.',
+                'status_code' => 200,
+                'message' => 'Service completed successfully.',
+                'service' => [
+                    'id' => $service->id,
+                    'status' => $service->fresh()->status,
+                ],
             ];
-        }
-
-        $service = Service::find($serviceId);
-
-        if ($service === null || $service->status !== 'in_progress') {
-            return [
-                'status_code' => 409,
-                'message' => 'Service must be in progress before it can be completed.',
-            ];
-        }
-
-        $service->update(['status' => 'completed']);
-
-        return [
-            'status_code' => 200,
-            'message' => 'Service completed successfully.',
-        ];
+        });
     }
 
     public function rejectOrder(int $assignmentId): array

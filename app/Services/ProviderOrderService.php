@@ -405,10 +405,15 @@ class ProviderOrderService
             ->whereIn('status', ['accepted', 'cancelled'])
             ->get();
 
+        // Current: this provider's assignment is accepted AND service is still active.
+        // Rejected and expired assignments are already excluded at the query level above.
         $current = $assignments->filter(
-            fn (ServiceAssignment $a) => in_array($a->service?->status, ['accepted', 'in_progress'], true)
+            fn (ServiceAssignment $a) => $a->status === 'accepted'
+                && in_array($a->service?->status, ['accepted', 'in_progress'], true)
         );
 
+        // Previous: service ended — either completed (assignment still accepted)
+        // or cancelled by the elder after this provider had accepted.
         $previous = $assignments->filter(
             fn (ServiceAssignment $a) => in_array($a->service?->status, ['completed', 'cancelled'], true)
         );

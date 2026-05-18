@@ -394,7 +394,7 @@ class ProviderOrderService
             ];
         }
 
-        $assignments = ServiceAssignment::with([
+        $acceptedAssignmentsQuery = fn () => ServiceAssignment::with([
             'service.nurseService',
             'service.companionService',
             'service.driverService',
@@ -402,21 +402,17 @@ class ProviderOrderService
         ])
             ->where('provider_id', $provider->id)
             ->where('provider_type', $user->account_type)
-            ->whereIn('status', ['accepted', 'cancelled'])
+            ->where('status', 'accepted');
+
+        $current = $acceptedAssignmentsQuery()
+            ->whereHas('service', fn ($query) => $query->whereIn('status', ['accepted', 'in_progress']))
+            ->latest()
             ->get();
 
-        // Current: this provider's assignment is accepted AND service is still active.
-        // Rejected and expired assignments are already excluded at the query level above.
-        $current = $assignments->filter(
-            fn (ServiceAssignment $a) => $a->status === 'accepted'
-                && in_array($a->service?->status, ['accepted', 'in_progress'], true)
-        );
-
-        // Previous: service ended — either completed (assignment still accepted)
-        // or cancelled by the elder after this provider had accepted.
-        $previous = $assignments->filter(
-            fn (ServiceAssignment $a) => in_array($a->service?->status, ['completed', 'cancelled'], true)
-        );
+        $previous = $acceptedAssignmentsQuery()
+            ->whereHas('service', fn ($query) => $query->where('status', 'completed'))
+            ->latest()
+            ->get();
 
         return [
             'status_code' => 200,
@@ -440,6 +436,7 @@ class ProviderOrderService
             'elder_name' => $elder?->full_name,
             'elder_phone' => $elder?->phone_number,
             'service_type' => $service?->service_type,
+            'assignment_status' => $assignment->status,
             'status' => $service?->status,
             'service_address' => $service?->service_type === 'driver'
                 ? ($service->driverService?->pickup_address ?? $service->service_address)

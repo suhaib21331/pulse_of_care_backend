@@ -131,6 +131,32 @@ class ProviderOrderController
         }
     }
 
+    public function archive(): JsonResponse
+    {
+        try {
+            $result = $this->providerOrderService->getPatientsArchive();
+
+            if ($result['status_code'] !== 200) {
+                return response()->json([
+                    'message' => $result['message'],
+                ], $result['status_code']);
+            }
+
+            return response()->json([
+                'current_count' => $result['current_count'],
+                'previous_count' => $result['previous_count'],
+                'current_patients' => $result['current_patients'],
+                'previous_patients' => $result['previous_patients'],
+            ], 200);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'message' => 'Unable to retrieve patients archive at this time.',
+            ], 500);
+        }
+    }
+
     public function reject(int $assignment): JsonResponse
     {
         try {

@@ -381,4 +381,89 @@ class ProviderOrderService
             'type' => $user->account_type,
         ];
     }
+
+    public function getPatientsArchive(): array
+    {
+        $user = auth()->guard('api')->user();
+        $provider = $this->resolveProviderProfile($user);
+
+        if ($provider === null) {
+            return [
+                'status_code' => 403,
+                'message' => 'Provider profile not found.',
+            ];
+        }
+
+        $assignments = ServiceAssignment::with([
+            'service.nurseService',
+            'service.companionService',
+            'service.driverService',
+            'service.elder',
+        ])
+            ->where('provider_id', $provider->id)
+            ->where('provider_type', $user->account_type)
+            ->whereIn('status', ['accepted', 'cancelled'])
+            ->get();
+
+        $current = $assignments->filter(
+            fn (ServiceAssignment $a) => in_array($a->service?->status, ['accepted', 'in_progress'], true)
+        );
+
+        $previous = $assignments->filter(
+            fn (ServiceAssignment $a) => in_array($a->service?->status, ['completed', 'cancelled'], true)
+        );
+
+        return [
+            'status_code' => 200,
+            'current_count' => $current->count(),
+            'previous_count' => $previous->count(),
+            'current_patients' => $current->map(fn (ServiceAssignment $a) => $this->formatPatient($a))->values(),
+            'previous_patients' => $previous->map(fn (ServiceAssignment $a) => $this->formatPatient($a))->values(),
+        ];
+    }
+
+    private function formatPatient(ServiceAssignment $assignment): array
+    {
+        $service = $assignment->service;
+        $elder = $service?->elder;
+
+        [$date, $time] = $this->resolvePatientSchedule($service);
+
+        return [
+            'service_id' => $service?->id,
+            'elder_id' => $elder?->id,
+            'elder_name' => $elder?->full_name,
+            'elder_phone' => $elder?->phone_number,
+            'service_type' => $service?->service_type,
+            'status' => $service?->status,
+            'service_address' => $service?->service_type === 'driver'
+                ? ($service->driverService?->pickup_address ?? $service->service_address)
+                : $service?->service_address,
+            'date' => $date,
+            'time' => $time,
+        ];
+    }
+
+    private function resolvePatientSchedule(?Service $service): array
+    {
+        if ($service === null) {
+            return [null, null];
+        }
+
+        if ($service->service_type === 'nurse' && $service->nurseService !== null) {
+            return [
+                $service->nurseService->scheduled_date?->format('Y-m-d'),
+                $service->nurseService->scheduled_time,
+            ];
+        }
+
+        if ($service->service_type === 'companion' && $service->companionService !== null) {
+            return [
+                $service->companionService->scheduled_date?->format('Y-m-d'),
+                $service->companionService->scheduled_time,
+            ];
+        }
+
+        return [null, null];
+    }
 }

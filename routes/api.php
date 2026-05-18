@@ -63,6 +63,9 @@ Route::prefix('v1')->group(function () {
             Route::post('/{service}/arrived', [ProviderOrderController::class, 'arrived']);
             Route::post('/{service}/complete', [ProviderOrderController::class, 'complete']);
         });
+
+        Route::get('/patients/archive', [ProviderOrderController::class, 'archive'])
+            ->middleware('account.type:nurse,companion');
     });
 
     Route::middleware(['auth:api'])->group(function () {
